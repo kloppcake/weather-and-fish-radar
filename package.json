@@ -1,0 +1,32 @@
+{
+  "name": "storm-ranger",
+  "version": "1.0.0",
+  "description": "Live radar with forecast loop, local forecast, NWS warnings, marine conditions and a tide/fishing analyzer",
+  "main": "main.js",
+  "author": "Ryan",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.ryan.stormranger",
+    "productName": "Storm Ranger",
+    "files": [
+      "index.html",
+      "main.js"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  }
+}
