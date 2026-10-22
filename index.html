@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>Storm Ranger — Radar, Forecast, Marine &amp; Tides</title>
+<title>Storm Ranger — Radar, Forecast &amp; Tides</title>
 <style>
 /* ============================================================
    PALETTE / BASE
@@ -322,6 +322,24 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .legend .lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:700}
 
 /* ============================================================
+   STATION STRIP  (under the radar)
+   ============================================================ */
+.radarstrip{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:9px;
+  margin-top:12px;padding-top:12px;border-top:1px solid var(--border);
+}
+.rs{
+  background:rgba(6,12,22,.5);border:1px solid var(--border);
+  border-radius:10px;padding:9px 11px;min-width:0;
+}
+.rs .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.rs .v{font-family:var(--mono);font-size:18px;font-weight:700;color:#fff;margin-top:4px}
+.rs .x{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.35}
+.rs.warn{border-color:rgba(251,146,60,.45);background:rgba(251,146,60,.10)}
+.rs.warn .v{color:#ffcb8a}
+@media (max-width:520px){ .radarstrip{grid-template-columns:1fr} }
+
+/* ============================================================
    WEATHER PANEL (Google-style)
    ============================================================ */
 .wx-head{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;justify-content:space-between}
@@ -355,7 +373,11 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .tile.hot{border-color:rgba(248,113,113,.5);background:rgba(248,113,113,.11)}
 .tile.hot .v{color:#ffb3b3}
 
-.wx-tabs{display:flex;gap:0;margin:18px 0 0;border-bottom:1px solid var(--border)}
+.wx-tabs{
+  display:flex;gap:0;margin:18px 0 0;border-bottom:1px solid var(--border);
+  overflow-x:auto;scrollbar-width:none;
+}
+.wx-tabs::-webkit-scrollbar{display:none}
 .wx-tabs button{
   flex:0 0 auto;min-width:0;background:none;border:0;border-bottom:2px solid transparent;
   border-radius:0;padding:9px 15px;color:var(--muted);font-size:13.5px;font-weight:600;
@@ -447,65 +469,11 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .switch.on::after{transform:translateX(19px);background:var(--accent)}
 
 /* ============================================================
-   ANALYZER TABS  (right rail: lightning / fishing)
+   UTILITY
    ============================================================ */
 [hidden]{display:none !important}
 
-.railtabs{
-  display:flex;gap:4px;padding:4px;border-radius:12px;
-  background:var(--panel);border:1px solid var(--border);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-}
-.railtabs button{
-  flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;gap:7px;
-  padding:10px 8px;border-radius:9px;border:1px solid transparent;background:transparent;
-  color:var(--muted);font-size:13px;font-weight:650;white-space:nowrap;
-}
-.railtabs button:hover:not(:disabled){background:rgba(125,170,220,.08);border-color:transparent}
-.railtabs button.on{background:rgba(125,211,252,.14);color:#eaf6ff;border-color:rgba(125,211,252,.34)}
-.railtabs button svg{width:15px;height:15px;flex:0 0 auto}
-.railtabs button.on[data-panel="fishing"]{background:rgba(74,222,128,.14);border-color:rgba(74,222,128,.34)}
 
-/* ============================================================
-   MARINE / BOATING
-   ============================================================ */
-.seastate{display:flex;align-items:center;gap:16px}
-.seastate .glyph{flex:0 0 auto;width:76px;height:56px}
-.seastate .txt{min-width:0}
-.seastate .v{font-size:23px;font-weight:700;line-height:1.15;color:#fff}
-.seastate .v.calm{color:#4ade80} .seastate .v.chop{color:#7dd3fc}
-.seastate .v.rough{color:var(--thunder)} .seastate .v.bad{color:var(--bad)}
-.seastate .s{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.45}
-
-.craft{
-  margin-top:14px;padding:11px 13px;border-radius:11px;font-size:12.5px;line-height:1.5;
-  background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.38);color:#f7e3b6;
-}
-.craft.bad{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.45);color:#ffd9d9}
-.craft b{color:#fff}
-
-.dirarrow{display:inline-block;transform-origin:50% 50%}
-
-.cwfbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.cwfbar select{flex:1 1 200px;width:auto;min-width:0}
-.cwfbar .issued{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap}
-
-.periods{display:flex;flex-direction:column;gap:8px;max-height:330px;overflow-y:auto}
-.period{
-  padding:10px 12px;border-radius:10px;
-  background:rgba(6,12,22,.5);border:1px solid var(--border);
-}
-.period .k{
-  font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;
-  color:var(--accent);margin-bottom:5px;
-}
-.period.tonight .k,.period.today .k{color:var(--thunder)}
-.period .p{font-size:12.5px;line-height:1.6;color:var(--text)}
-.synopsis{
-  font-size:12.5px;line-height:1.6;color:var(--muted);
-  padding:11px 13px;border-radius:10px;background:rgba(125,170,220,.05);
-  border:1px solid var(--border);margin-bottom:10px;
-}
 
 /* ============================================================
    FISHING / TIDE ANALYZER
@@ -586,7 +554,7 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
   <header>
     <div class="brand">
       <h1>⚡ Storm Ranger</h1>
-      <p>Live radar with a forecast loop, the local forecast, and a two-tab analyzer: sea state and the coastal waters forecast, or tides and bite windows from the NOAA gauge.</p>
+      <p>Live radar with a forecast loop, the local forecast, and a tide and fishing analyzer built on the NOAA gauge at St. Petersburg.</p>
     </div>
     <div class="headbtns">
       <button class="iconbtn" id="refreshBtn" title="Refresh radar, forecast and alerts">
@@ -652,54 +620,17 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
         <span class="lbl">Extreme</span>
         <span class="lbl" id="motionNote" style="margin-left:auto;color:var(--thunder)">▮ amber = forecast</span>
       </div>
+
+      <div class="radarstrip">
+        <div class="rs"><div class="l">Water temp</div><div class="v" id="rsWater">—</div><div class="x" id="rsWaterSub">reading the gauge…</div></div>
+        <div class="rs"><div class="l">Wind</div><div class="v" id="rsWind">—</div><div class="x" id="rsWindSub">reading the gauge…</div></div>
+        <div class="rs"><div class="l">Gusts</div><div class="v" id="rsGust">—</div><div class="x" id="rsGustSub">reading the gauge…</div></div>
+      </div>
     </div>
 
-    <!-- ============ RIGHT: ANALYZER TABS ============ -->
+    <!-- ============ RIGHT: FISHING &amp; TIDES ============ -->
     <div class="stack">
 
-      <div class="railtabs" id="railTabs" role="tablist">
-        <button data-panel="marine" class="on" role="tab" aria-selected="true" aria-controls="panelMarine">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 17.5c1.6 0 1.6 1.4 3.2 1.4s1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4"/><path d="M4.5 14.5 12 3l7.5 11.5"/><path d="M12 3v11.5"/></svg>
-          <span>Marine &amp; boating</span>
-        </button>
-        <button data-panel="fishing" role="tab" aria-selected="false" aria-controls="panelFishing">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c3.6-4.6 7.6-6.9 12-6.9 3.4 0 6 1.6 8 4.6-2 3-4.6 4.6-8 4.6-4.4 0-8.4-2.3-12-6.9z"/><path d="M17.6 11.4h.01"/><path d="M6.5 15.5C6 17.6 4.6 19.4 2.4 21"/></svg>
-          <span>Fishing &amp; tides</span>
-        </button>
-      </div>
-
-
-      <!-- ============ MARINE &amp; BOATING ============ -->
-      <div class="stack" id="panelMarine" role="tabpanel" aria-labelledby="railTabs">
-
-        <div class="card">
-          <h2><span>On the water</span><span class="sub" id="marineAge">loading…</span></h2>
-          <div class="seastate">
-            <div class="glyph" id="seaGlyph"></div>
-            <div class="txt">
-              <div class="v" id="seaWord">—</div>
-              <div class="s" id="seaNote">Reading the wave model…</div>
-            </div>
-          </div>
-          <div class="craft" id="craftNote" hidden></div>
-          <div class="wx-tiles" id="marineTiles"></div>
-        </div>
-
-        <div class="card">
-          <h2><span>Wave outlook</span><span class="sub">next 48 hours</span></h2>
-          <div class="chartwrap" id="waveChart"><div class="chart-empty">Loading wave model…</div></div>
-        </div>
-
-        <div class="card">
-          <h2><span>Coastal waters forecast</span><span class="sub" id="cwfIssued"></span></h2>
-          <div class="cwfbar"><select id="cwfSel" hidden></select></div>
-          <div id="cwfBody"><div class="chart-empty">Loading the forecaster's text…</div></div>
-        </div>
-
-      </div>
-
-      <!-- ============ FISHING &amp; TIDES ============ -->
-      <div class="stack" id="panelFishing" role="tabpanel" aria-labelledby="railTabs" hidden>
 
         <div class="card">
           <h2><span>Bite window</span><span class="sub" id="biteStation">St. Petersburg · 8726520</span></h2>
@@ -729,8 +660,6 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
           <h2><span>Solunar periods</span><span class="sub">moon overhead &amp; underfoot</span></h2>
           <div class="solunar" id="solunar"></div>
         </div>
-
-      </div>
     </div>
   </div>
 
@@ -780,8 +709,8 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
   </div>
 
   <footer>
-    Radar: RainViewer · basemap: Esri · forecast and wave model: Open-Meteo<br>
-    Warnings and coastal waters forecast: US National Weather Service · tides and station data: NOAA CO-OPS. Camera and mic streams never leave this page.
+    Radar: RainViewer · basemap: Esri · forecast: Open-Meteo<br>
+    Warnings: US National Weather Service · tides and station data: NOAA CO-OPS. Camera and mic streams never leave this page.
   </footer>
 </div>
 
@@ -1111,13 +1040,25 @@ function radarUrl(frame, z, x, y){
 }
 
 /* ---------- sizing ---------- */
-function sizeMap(){
-  MDPR = Math.min(window.devicePixelRatio || 1, 2);
+/* A canvas whose bitmap no longer matches its box is the failure that makes
+   the whole map look broken: the tiles are stretched to the wrong aspect and
+   the part that was never painted stays blank. Resize events are not always
+   enough to catch it (a panel can change size with no event of its own), so
+   the size is re-checked before every draw instead of being trusted. Resizing
+   a canvas clears it, so this only touches it when something really moved. */
+function ensureSized(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const r = mapwrap.getBoundingClientRect();
-  VW = Math.max(1, Math.round(r.width));
-  VH = Math.max(1, Math.round(r.height));
+  const w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+  if (w === VW && h === VH && dpr === MDPR) return false;
+  VW = w; VH = h; MDPR = dpr;
   mapCv.width  = fxCv.width  = Math.round(VW * MDPR);
   mapCv.height = fxCv.height = Math.round(VH * MDPR);
+  return true;
+}
+
+function sizeMap(){
+  ensureSized();
   requestDraw();
   queuePreload();
 }
@@ -1164,6 +1105,7 @@ function drawLayer(z, urlFor, alpha, offX, offY){
 }
 
 function drawMap(){
+  if (ensureSized()) queuePreload();          // the visible tile set moved with it
   const z = tileZ();
   const W = mapCv.width, H = mapCv.height;
 
@@ -1239,8 +1181,13 @@ function drawOverlay(){
   mctx.restore();
 }
 
-/* the pulse only ever touches the overlay canvas */
-setInterval(() => { if (document.visibilityState === 'visible') drawOverlay(); }, 120);
+/* The pulse only ever touches the overlay canvas. This tick also doubles as
+   the backstop that notices a resize nothing told us about. */
+setInterval(() => {
+  if (document.visibilityState !== 'visible') return;
+  if (ensureSized()){ drawMap(); queuePreload(); }
+  drawOverlay();
+}, 120);
 
 /* ---------- interaction ---------- */
 let dragging = false, lastPt = null, movedPx = 0;
@@ -1691,7 +1638,7 @@ async function loadWeather(){
     wx = await r.json();
     wxDayIdx = 0;
     renderWeather();
-    if (marine.at) renderMarine();   // the wind tiles come from this payload
+    renderRadarStrip();              // the wind fallback comes from this payload
     if (!MOTION.ok){                 // radar correlation found nothing; try the steering wind now
       steeringWindFallback();
       if (MOTION.ok){ rebuildFrames(false); }
@@ -1933,7 +1880,7 @@ function setUnits(u){
   if (wx) renderWeather();
   describeMotion();
   if (tide.at) renderFishing();
-  if (marine.at) renderMarine();
+  renderRadarStrip();
   requestDraw();
 }
 
@@ -2036,7 +1983,7 @@ function setPlace(name, lat, lon, zoom){
   $('radarPlace').textContent = name;
   view.lat = lat; view.lon = lon; view.zoom = S.zoom;
   requestDraw(); queuePreload();
-  loadWeather(); loadAlerts(); loadMarine(); loadCWF();
+  loadWeather(); loadAlerts();
   if (tide.at) renderFishing();          // solunar times are latitude-dependent
 }
 
@@ -2074,7 +2021,7 @@ $('resetSettings').onclick = () => {
   applySettings();
   view.lat = S.lat; view.lon = S.lon; view.zoom = S.zoom;
   rebuildFrames(true); requestDraw(); queuePreload();
-  loadWeather(); loadAlerts(); loadTide(); loadMarine(); loadCWF();
+  loadWeather(); loadAlerts(); loadTide();
 };
 
 /* push the stored settings into every control */
@@ -2107,25 +2054,28 @@ function applySettings(){
 /* ================================================================
    REFRESH + RESIZE
    ================================================================ */
-function refreshAll(){ loadRadar(); loadWeather(); loadAlerts(); loadTide(); loadMarine(); loadCWF(); }
+function refreshAll(){ loadRadar(); loadWeather(); loadAlerts(); loadTide(); }
 $('refreshBtn').onclick = refreshAll;
 
 setInterval(() => { if (document.visibilityState === 'visible') loadRadar();   }, 4 * 60 * 1000);
 setInterval(() => { if (document.visibilityState === 'visible') loadWeather(); }, 10 * 60 * 1000);
 setInterval(() => { if (document.visibilityState === 'visible') loadAlerts();  }, 5 * 60 * 1000);
 setInterval(() => { if (document.visibilityState === 'visible') loadTide();    }, 10 * 60 * 1000);
-setInterval(() => { if (document.visibilityState === 'visible') loadMarine();  }, 15 * 60 * 1000);
-setInterval(() => { if (document.visibilityState === 'visible') loadCWF();     }, 20 * 60 * 1000);
 
-let resizeTimer = 0;
+let resizeTimer = 0, chartTimer = 0;
 function onResize(){
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => { sizeMap(); renderChart(); renderTideChart(); renderWaveChart(); sizeRain(); }, 120);
+  resizeTimer = setTimeout(() => { sizeMap(); renderChart(); renderTideChart(); sizeRain(); }, 120);
+}
+function onChartResize(){
+  clearTimeout(chartTimer);
+  chartTimer = setTimeout(() => { renderChart(); renderTideChart(); }, 120);
 }
 addEventListener('resize', onResize);
 if (window.ResizeObserver){
   new ResizeObserver(onResize).observe(mapwrap);
-  new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(renderChart, 120); }).observe($('chartWrap'));
+  new ResizeObserver(onChartResize).observe($('chartWrap'));
+  new ResizeObserver(onChartResize).observe($('tideChart'));
 }
 
 /* ================================================================
@@ -2180,29 +2130,6 @@ function ambient(){
   setTimeout(ambient, 7000 + Math.random() * 15000);
 }
 
-/* ================================================================
-   ANALYZER TABS
-   The right-hand rail hosts one panel at a time.
-   ================================================================ */
-let railPanel = 'marine';
-
-function showPanel(name){
-  railPanel = name;
-  $('railTabs').querySelectorAll('button').forEach(b => {
-    const on = b.dataset.panel === name;
-    b.classList.toggle('on', on);
-    b.setAttribute('aria-selected', String(on));
-  });
-  $('panelMarine').hidden  = name !== 'marine';
-  $('panelFishing').hidden = name !== 'fishing';
-  // both charts size themselves off a laid-out container, so redraw on reveal
-  if (name === 'marine')  renderWaveChart();
-  if (name === 'fishing') renderTideChart();
-}
-$('railTabs').onclick = e => {
-  const b = e.target.closest('button');
-  if (b) showPanel(b.dataset.panel);
-};
 
 /* ================================================================
    MOON  —  phase, and the overhead/underfoot times the solunar
@@ -2352,6 +2279,7 @@ async function loadTide(){
   tide.press = (got.press && got.press.data || []).map(p => ({ t: parseLocal(p.t).getTime(), v: num(p.v) })).filter(p => p.v != null);
   tide.at = Date.now();
   renderFishing();
+  renderRadarStrip();
 }
 
 /* ---------- derived numbers ---------- */
@@ -2651,286 +2579,56 @@ function renderSolunar(){
   }).join('');
 }
 
+/* ================================================================
+   STATION STRIP  —  the three numbers worth a glance before you go,
+   sitting under the radar. Read off the NOAA gauge where it has the
+   sensor, and off the forecast model where it does not; the caption
+   says which, because a modelled wind and a measured one are not the
+   same claim.
+   ================================================================ */
+const compassPt = deg => COMPASS[Math.round(((deg % 360) + 360) % 360 / 22.5) % 16];
+/* The headline stays in knots because that is what the gauge reports and what
+   a marine forecast speaks; the second line follows the unit switch. */
+const ktAlso = kt => isMetric() ? Math.round(kt * 1.852) + ' km/h' : Math.round(kt * 1.15078) + ' mph';
+
+function renderRadarStrip(){
+  const st = TIDE_STATIONS.find(x => x.id === S.station);
+  const stName = st ? st.name : 'the station';
+
+  if (tide.wtemp != null){
+    $('rsWater').textContent = fmtTemp(tide.wtemp);
+    $('rsWaterSub').textContent = stName + ' gauge';
+  } else {
+    $('rsWater').textContent = '—';
+    $('rsWaterSub').textContent = 'no sensor at ' + stName;
+  }
+
+  const gKt = tide.wind ? num(tide.wind.s) : null;
+  const gGk = tide.wind ? num(tide.wind.g) : null;
+  const fKt = (wx && wx.current && wx.current.wind_speed_10m != null) ? wx.current.wind_speed_10m / 1.15078 : null;
+  const fGk = (wx && wx.current && wx.current.wind_gusts_10m != null) ? wx.current.wind_gusts_10m / 1.15078 : null;
+
+  const kt = gKt != null ? gKt : fKt;
+  const gk = gGk != null ? gGk : fKt != null ? fGk : null;
+  const from = tide.wind ? tide.wind.dr
+             : (wx && wx.current && wx.current.wind_direction_10m != null ? compassPt(wx.current.wind_direction_10m) : '');
+  const src = gKt != null ? stName + ' gauge' : 'forecast model';
+
+  $('rsWind').textContent = kt == null ? '—' : (from ? from + ' ' : '') + Math.round(kt) + ' kt';
+  $('rsWindSub').textContent = kt == null ? 'unavailable' : ktAlso(kt) + ' · ' + src;
+  $('rsGust').textContent = gk == null ? '—' : Math.round(gk) + ' kt';
+  $('rsGustSub').textContent = gk == null ? 'unavailable' : ktAlso(gk);
+
+  $('rsWind').parentElement.classList.toggle('warn', kt != null && kt >= 18);
+  $('rsGust').parentElement.classList.toggle('warn', gk != null && gk >= 25);
+}
+
 /* the countdown and the live/next markers drift, so retick them */
 setInterval(() => {
   if (!tide.at || document.visibilityState !== 'visible') return;
   renderNextTide(); renderSolunar(); renderTideTable();
 }, 30000);
 
-/* ================================================================
-   MARINE  —  sea state now, the wave outlook, and the National
-   Weather Service Coastal Waters Forecast in the forecaster's own
-   words.
-
-   Waves come from the Open-Meteo marine model, which snaps an inland
-   request to the nearest water cell, so the numbers follow whichever
-   location is selected. The forecast text comes from whichever weather
-   office covers those coordinates, so it keeps working outside Tampa.
-   ================================================================ */
-const marine = { cur:null, hourly:null, at:0, err:'' };
-const cwf = { zones:[], issued:0, office:'', sel:null, err:'' };
-
-const MARINE_API = 'https://marine-api.open-meteo.com/v1/marine' +
-  '?current=wave_height,wave_period,wave_direction,sea_surface_temperature' +
-  '&hourly=wave_height,wave_period,wave_direction,swell_wave_height,sea_surface_temperature' +
-  '&length_unit=imperial&temperature_unit=fahrenheit&timezone=auto&forecast_days=3';
-
-const ftToM = ft => ft * 0.3048;
-function fmtWave(ft){
-  if (ft == null) return '—';
-  if (!isMetric()) return ft.toFixed(1) + ' ft';
-  const m = ftToM(ft);
-  return (m < 1 ? m.toFixed(2) : m.toFixed(1)) + ' m';   // 0.0 m reads as missing data
-}
-const CARD16 = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-const compass = deg => CARD16[Math.round(((deg % 360) + 360) % 360 / 22.5) % 16];
-
-async function loadMarine(){
-  try{
-    const r = await fetch(MARINE_API + '&latitude=' + S.lat.toFixed(4) + '&longitude=' + S.lon.toFixed(4), { cache:'no-store' });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const j = await r.json();
-    if (j.error) throw new Error(j.reason || 'marine model error');
-    marine.cur = j.current; marine.hourly = j.hourly; marine.at = Date.now(); marine.err = '';
-  }catch(err){
-    marine.err = 'Wave model unavailable';
-  }
-  renderMarine();
-}
-
-/* ---------- Coastal Waters Forecast ---------- */
-async function loadCWF(){
-  try{
-    const pt = await (await fetch('https://api.weather.gov/points/' + S.lat.toFixed(4) + ',' + S.lon.toFixed(4))).json();
-    const office = pt.properties && pt.properties.cwa;
-    if (!office) throw new Error('no weather office for these coordinates');
-
-    const list = await (await fetch('https://api.weather.gov/products/types/CWF/locations/' + office)).json();
-    const head = (list['@graph'] || [])[0];
-    if (!head) throw new Error('no coastal forecast from ' + office);
-
-    const prod = await (await fetch(head['@id'])).json();
-    cwf.office = office;
-    cwf.issued = new Date(prod.issuanceTime).getTime();
-    cwf.zones = parseCWF(prod.productText || '');
-    cwf.err = cwf.zones.length ? '' : 'Coastal forecast could not be read';
-    if (!cwf.zones.some(z => z.codes.indexOf(cwf.sel) >= 0))
-      cwf.sel = (cwf.zones.find(z => !/^Synopsis/i.test(z.name)) || cwf.zones[0] || {}).codes[0];
-  }catch(err){
-    cwf.zones = [];
-    cwf.err = 'No coastal waters forecast here — this is a US marine product.';
-  }
-  renderCWF();
-}
-
-/* The product is one text file with a block per marine zone. Each block
-   opens with its zone codes, then the zone name, then dotted periods. */
-function parseCWF(text){
-  const re = /^((?:[A-Z]{3}\d{3}-)+)\d{6}-[ \t]*\r?\n(.+?)-[ \t]*\r?\n/gm;
-  const blocks = [];
-  let m, prev = null;
-  while ((m = re.exec(text)) !== null){
-    if (prev) prev.body = text.slice(prev.end, m.index);
-    prev = { codes: m[1].replace(/-$/, '').split('-'), name: m[2].trim(), end: re.lastIndex, body:'' };
-    blocks.push(prev);
-  }
-  if (prev) prev.body = text.slice(prev.end);
-
-  for (const b of blocks){
-    delete b.end;
-    const cut = b.body.indexOf('\n.');
-    const raw = cut >= 0 ? b.body.slice(cut) : '';
-    b.periods = raw.split(/\r?\n(?=\.)/).map(chunk => {
-      const mm = /^\.([^.]+)\.\.\.([\s\S]*)$/.exec(chunk.trim());
-      if (!mm) return null;
-      return { label: mm[1].trim(), text: mm[2].replace(/\s*\r?\n\s*/g, ' ').replace(/\s*\$\$\s*$/, '').trim() };
-    }).filter(p => p && p.text);
-    if (!b.periods.length) b.synopsis = b.body.replace(/^[\s\S]*?\n\n/, '').replace(/\s*\r?\n\s*/g, ' ').replace(/\s*\$\$\s*$/, '').trim();
-  }
-  return blocks.filter(b => b.periods.length || b.synopsis);
-}
-
-/* ---------- sea state ---------- */
-function seaState(){
-  const h = marine.cur ? marine.cur.wave_height : null;
-  if (h == null) return { cls:'chop', word:'Unknown', note:'No wave data for this spot.' };
-  if (h < 0.5)  return { cls:'calm',  word:'Smooth',      note:'Glass to a ripple. Good for small boats and paddle craft.' };
-  if (h < 1.5)  return { cls:'chop',  word:'Light chop',  note:'Comfortable for most boats.' };
-  if (h < 3)    return { cls:'chop',  word:'Choppy',      note:'A wet ride in anything small.' };
-  if (h < 5)    return { cls:'rough', word:'Rough',       note:'Small craft should think twice.' };
-  return              { cls:'bad',    word:'Hazardous',   note:'Stay in. Seas are dangerous for small craft.' };
-}
-
-function windKt(){
-  if (!wx || !wx.current || wx.current.wind_speed_10m == null) return null;
-  return wx.current.wind_speed_10m / 1.15078;               // the forecast is fetched in mph
-}
-function gustKt(){
-  if (!wx || !wx.current || wx.current.wind_gusts_10m == null) return null;
-  return wx.current.wind_gusts_10m / 1.15078;
-}
-
-/* ---------- renderers ---------- */
-function renderMarine(){
-  $('marineAge').textContent = marine.err ? 'model offline'
-    : marine.at ? 'updated ' + timeShort(new Date(marine.at)) : 'loading…';
-
-  const c = marine.cur;
-  const st = seaState();
-  $('seaWord').textContent = st.word;
-  $('seaWord').className = 'v ' + st.cls;
-  $('seaNote').textContent = marine.err ? marine.err : st.note;
-  $('seaGlyph').innerHTML = waveGlyph(st.cls);
-
-  const kt = windKt(), gk = gustKt();
-  const h = c ? c.wave_height : null;
-  const arrow = d => d == null ? '' :
-    '<span class="dirarrow" style="transform:rotate(' + ((d + 180) % 360) + 'deg)">↑</span> ';
-
-  const tile = (l, v, x, cls) =>
-    '<div class="tile' + (cls ? ' ' + cls : '') + '"><div class="l">' + l + '</div>' +
-    '<div class="v">' + v + '</div>' + (x ? '<div class="x">' + x + '</div>' : '') + '</div>';
-
-  const swellNow = hourlyNow('swell_wave_height');
-  $('marineTiles').innerHTML =
-    tile('Waves',      fmtWave(h), c && c.wave_direction != null ? arrow(c.wave_direction) + 'From ' + compass(c.wave_direction) : 'Mean height',
-         (h != null && h >= 4) ? 'warn' : '') +
-    tile('Period',     c && c.wave_period != null ? c.wave_period.toFixed(1) + ' s' : '—', 'Between crests') +
-    tile('Swell',      fmtWave(swellNow), 'Long-period component') +
-    tile('Water temp', c && c.sea_surface_temperature != null ? fmtTemp(c.sea_surface_temperature) : '—', 'Sea surface') +
-    tile('Wind',       kt == null ? '—' : Math.round(kt) + ' kt',
-         kt == null ? '' : compass(wx.current.wind_direction_10m) + ' · ' + Math.round(wx.current.wind_speed_10m) + ' mph',
-         (kt != null && kt >= 18) ? 'warn' : '') +
-    tile('Gusts',      gk == null ? '—' : Math.round(gk) + ' kt', gk == null ? '' : 'Peak right now',
-         (gk != null && gk >= 25) ? 'hot' : '');
-
-  // small-craft style caution, worked out from the same numbers shown above
-  const el = $('craftNote');
-  const rough = (h != null && h >= 4) || (kt != null && kt >= 18);
-  const bad   = (h != null && h >= 6) || (kt != null && kt >= 25);
-  if (!rough){ el.hidden = true; }
-  else {
-    el.hidden = false;
-    el.className = 'craft' + (bad ? ' bad' : '');
-    el.innerHTML = '<b>' + (bad ? 'Dangerous for small craft.' : 'Small craft should exercise caution.') + '</b> ' +
-      'Seas ' + fmtWave(h) + (kt == null ? '' : ' with wind near ' + Math.round(kt) + ' kt') +
-      '. This is the app reading the numbers, not an official advisory — check the forecast text below.';
-  }
-
-  renderWaveChart();
-}
-
-function hourlyNow(key){
-  const h = marine.hourly;
-  if (!h || !h[key]) return null;
-  const now = Date.now();
-  let best = 0, gap = Infinity;
-  for (let i = 0; i < h.time.length; i++){
-    const g = Math.abs(parseLocal(h.time[i]).getTime() - now);
-    if (g < gap){ gap = g; best = i; }
-  }
-  return h[key][best];
-}
-
-function waveGlyph(cls){
-  const col = cls === 'calm' ? '#4ade80' : cls === 'chop' ? '#7dd3fc' : cls === 'rough' ? '#fbbf24' : '#f87171';
-  const amp = cls === 'calm' ? 2 : cls === 'chop' ? 5 : cls === 'rough' ? 9 : 13;
-  const line = (y, o) =>
-    '<path d="M2 ' + y + ' q 9 -' + amp + ' 18 0 t 18 0 t 18 0 t 18 0" fill="none" stroke="' + col +
-    '" stroke-width="2.6" stroke-linecap="round" opacity="' + o + '"/>';
-  return '<svg viewBox="0 0 76 56" width="76" height="56" aria-hidden="true">' +
-         line(20, .35) + line(32, .7) + line(44, 1) + '</svg>';
-}
-
-function renderWaveChart(){
-  const wrap = $('waveChart');
-  const h = marine.hourly;
-  if (!h || !h.wave_height){ wrap.innerHTML = '<div class="chart-empty">No wave outlook available.</div>'; return; }
-
-  const now = Date.now();
-  const idx = [];
-  for (let i = 0; i < h.time.length; i++){
-    const t = parseLocal(h.time[i]).getTime();
-    if (t >= now - 3600000 && t <= now + 48 * 3600000) idx.push(i);
-  }
-  if (idx.length < 2){ wrap.innerHTML = '<div class="chart-empty">No wave outlook available.</div>'; return; }
-
-  const W = Math.max(280, Math.round(wrap.clientWidth || 460));
-  const H = 178, padL = 12, padR = 12, padT = 32, padB = 26;
-  const iw = W - padL - padR, ih = H - padT - padB;
-  const vals = idx.map(i => isMetric() ? ftToM(h.wave_height[i]) : h.wave_height[i]);
-  const caution = isMetric() ? ftToM(4) : 4;
-  // scale to the data, not to the caution line — otherwise a calm day draws
-  // as a flat line pinned to the axis with all the room given to a threshold
-  // nothing is going to reach
-  const floor = isMetric() ? ftToM(1.5) : 1.5;
-  const hiV = Math.max(Math.max.apply(null, vals) * 1.3, floor);
-  const showCaution = caution <= hiV;
-  const xAt = k => padL + k * iw / (idx.length - 1);
-  const yAt = v => padT + ih - v / hiV * ih;
-
-  let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img">' +
-    '<defs><linearGradient id="waveFill" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0" stop-color="#38bdf8" stop-opacity=".38"/>' +
-    '<stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></linearGradient></defs>';
-
-  svg += '<line x1="' + padL + '" y1="' + (padT+ih) + '" x2="' + (W-padR) + '" y2="' + (padT+ih) + '" stroke="rgba(125,170,220,.18)"/>';
-
-  // the line where it stops being fun, drawn only when it is actually in view
-  if (showCaution){
-    svg += '<line x1="' + padL + '" y1="' + yAt(caution).toFixed(1) + '" x2="' + (W-padR) + '" y2="' + yAt(caution).toFixed(1) +
-           '" stroke="rgba(251,191,36,.55)" stroke-width="1" stroke-dasharray="4 4"/>' +
-           '<text x="' + (W-padR) + '" y="' + (yAt(caution) - 5).toFixed(1) + '" fill="#fbbf24" font-size="9.5" ' +
-           'text-anchor="end" font-family="system-ui,sans-serif">rough for small craft</text>';
-  }
-
-  for (let k = 0; k < idx.length; k += 6){
-    const d = parseLocal(h.time[idx[k]]);
-    svg += '<text x="' + xAt(k).toFixed(1) + '" y="' + (H - 8) + '" fill="#5a6c86" font-size="10.5" ' +
-           'text-anchor="middle" font-family="system-ui,sans-serif">' +
-           d.toLocaleTimeString([], { hour:'numeric' }).replace(' ','').toLowerCase() + '</text>';
-  }
-
-  const d = vals.map((v,k) => xAt(k).toFixed(1) + ',' + yAt(v).toFixed(1)).join(' L');
-  svg += '<path d="M' + d + ' L' + xAt(idx.length-1).toFixed(1) + ',' + (padT+ih) + ' L' + padL + ',' + (padT+ih) + ' Z" fill="url(#waveFill)"/>';
-  svg += '<path d="M' + d + '" fill="none" stroke="#38bdf8" stroke-width="2.4" stroke-linejoin="round"/>';
-  for (let k = 0; k < idx.length; k += 6)
-    svg += '<text x="' + xAt(k).toFixed(1) + '" y="' + (yAt(vals[k]) - 9).toFixed(1) + '" fill="#bfe3ff" font-size="11" ' +
-           'font-weight="650" text-anchor="middle" font-family="ui-monospace,Consolas,monospace">' + vals[k].toFixed(1) + '</text>';
-
-  svg += '<text x="' + padL + '" y="' + (padT - 16) + '" fill="#5a6c86" font-size="10.5" font-family="system-ui,sans-serif">' +
-         'Wave height, next 48 hours (' + (isMetric() ? 'm' : 'ft') + ')' +
-         (showCaution ? '' : ' — stays well under the ' + fmtWave(4) + ' small-craft mark') + '</text></svg>';
-  wrap.innerHTML = svg;
-}
-
-function renderCWF(){
-  const bar = $('cwfSel'), body = $('cwfBody');
-  $('cwfIssued').textContent = cwf.issued ? cwf.office + ' · ' + timeShort(new Date(cwf.issued)) : '';
-
-  if (!cwf.zones.length){
-    bar.innerHTML = '';
-    bar.hidden = true;
-    body.innerHTML = '<div class="chart-empty">' + esc(cwf.err || 'Loading…') + '</div>';
-    return;
-  }
-  bar.hidden = false;
-  bar.innerHTML = cwf.zones.map(z =>
-    '<option value="' + z.codes[0] + '">' + esc(z.name) + '</option>').join('');
-  bar.value = cwf.sel;
-
-  const z = cwf.zones.find(x => x.codes.indexOf(cwf.sel) >= 0) || cwf.zones[0];
-  let html = '';
-  if (z.synopsis) html += '<div class="synopsis">' + esc(z.synopsis) + '</div>';
-  html += '<div class="periods">' + z.periods.map(p => {
-    const soon = /TONIGHT|TODAY|THIS AFTERNOON|REST OF/i.test(p.label) ? ' tonight' : '';
-    return '<div class="period' + soon + '"><div class="k">' + esc(p.label) + '</div>' +
-           '<div class="p">' + esc(p.text) + '</div></div>';
-  }).join('') + '</div>';
-  body.innerHTML = html;
-}
-
-$('cwfSel').onchange = e => { cwf.sel = e.target.value; renderCWF(); };
 
 /* ================================================================
    GO

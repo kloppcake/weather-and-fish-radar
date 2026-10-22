@@ -1,8 +1,8 @@
 # Storm Ranger — Desktop App (Windows)
 
 A Tampa Bay storm and water station in a single window: live radar with a
-forecast loop, the local forecast, National Weather Service warnings, marine
-conditions, and a tide and fishing analyzer built on the NOAA gauge.
+forecast loop, the local forecast, National Weather Service warnings, and a tide
+and fishing analyzer built on the NOAA gauge at St. Petersburg.
 
 ---
 
@@ -14,6 +14,13 @@ radar scans and a projected loop that runs an hour ahead. Drag to pan, use the
 to your location. The timeline under the map plays the loop; blue ticks are real
 scans, amber ticks are the forecast, and the white **NOW** line divides them.
 Dashed rings mark 10, 25 and 50 miles from where you are standing.
+
+Under the map sit the three numbers worth a glance before you go out: **water
+temperature, wind and gusts**. Wind is in knots because that is what the gauge
+reports and what a marine forecast speaks, with your chosen units on the line
+below. Each one says where it came from — the NOAA gauge has the sensor at
+St. Petersburg and Clearwater Beach, and the forecast model fills in for wind at
+the stations that do not.
 
 **How the forecast loop works.** RainViewer publishes a nowcast feed, and the app
 uses it whenever it has frames. It is frequently empty on the keyless feed, so
@@ -33,28 +40,8 @@ day to move the chart to it.
 **Warnings.** Active National Weather Service alerts for your coordinates appear
 at the top of the page, colour-coded by severity. Tap one for the full text.
 
-**The right-hand rail is a tabbed analyzer.** Two tabs share the space.
-
-*Marine and boating* answers whether it is worth going out:
-
-- A **sea state** verdict — smooth, light chop, choppy, rough or hazardous — read
-  off the wave model, with a caution note when the wind or the seas get up. That
-  note is the app doing arithmetic on the numbers shown next to it, not an
-  official Small Craft Advisory; real advisories appear in the warnings strip at
-  the top of the page.
-- Tiles for wave height and the direction it runs from, wave period, swell,
-  sea surface temperature, and wind and gusts in knots.
-- A **wave outlook** for the next 48 hours. The small-craft line only appears when
-  the forecast actually approaches it, so a calm week does not draw as a flat line
-  pinned to the axis.
-- The **Coastal Waters Forecast** in the forecaster's own words, split by period,
-  with a picker for every marine zone the local office issues. On Tampa Bay that
-  is the bay itself, Charlotte Harbor, and the Gulf zones out to 20 and 60
-  nautical miles. The office is looked up from your coordinates, so this keeps
-  working anywhere on a US coast.
-
-*Fishing and tides* pulls from the NOAA CO-OPS gauge at **St. Petersburg
-(8726520)**, changeable in Settings. It shows:
+**The right-hand rail is the fishing and tide analyzer.** It pulls from the NOAA
+CO-OPS gauge at **St. Petersburg (8726520)**, changeable in Settings, and shows:
 
 - A **bite score** out of 100 with the verdict and every input listed, so you can
   disagree with it. It blends tide flow rate, solunar timing, moon phase, wind and
@@ -152,18 +139,13 @@ Everything is keyless and free, and the app talks to these directly:
 | Forecast | Open-Meteo |
 | Warnings | US National Weather Service |
 | Tides and station observations | NOAA CO-OPS |
-| Waves and sea surface temperature | Open-Meteo marine model |
-| Coastal Waters Forecast | US National Weather Service |
 
 Radar tiles exist up to zoom 7 on the keyless feed, so zooming past that scales
 the last available level over a sharper basemap — expect the precipitation to
 soften while the coastline stays crisp.
 
-Warnings and the Coastal Waters Forecast are US-only. Radar, forecast and the
-wave model work anywhere; put any coordinates into Settings. The wave model snaps
-an inland request to the nearest water cell, so a city-centre location reports the
-sheltered water beside it rather than open sea — move the marker seaward, or pick
-the Gulf zone in the forecast picker, for offshore conditions.
+Warnings and tides are US-only. Radar and forecast work anywhere; put any
+coordinates into Settings.
 
 ---
 
@@ -175,8 +157,15 @@ the Gulf zone in the forecast picker, for offshore conditions.
   Press **Refresh**. Everything else keeps working without it.
 - **No amber forecast frames** — there is nothing moving to project. The legend
   says so directly.
-- **Tide tiles all show em-dashes** — that station has tide predictions but no
-  physical sensors. Switch to St. Petersburg or Clearwater Beach in Settings.
+- **Tide tiles, or the strip under the radar, show em-dashes** — that station has
+  tide predictions but no physical sensors. Switch to St. Petersburg or Clearwater
+  Beach in Settings.
+- **The map looks stretched, or part of it is blank** — this was a real bug and is
+  fixed. The canvas now re-checks its own size before every frame, so it recovers
+  on its own within a fraction of a second even when nothing reports the change.
+- **The map is fine but there is no colour on it** — then there is no rain in
+  range. Zoom out to check: the radar only paints where there is something to
+  paint, and Tampa is dry for most of the winter.
 - **Nothing happens on `npm start` the very first time** — make sure `npm install`
   finished without a red `ERR!` at the end. If it errored, run `npm install` again.
 
@@ -185,8 +174,8 @@ the Gulf zone in the forecast picker, for offshore conditions.
 ## A note on privacy
 
 The app has no camera or microphone access at all. The only thing written to disk
-is your settings. Your coordinates are sent to the forecast, warnings, marine and
-tide services, because that is how they know what to answer with.
+is your settings. Your coordinates are sent to the forecast, warnings and tide
+services, because that is how they know what to answer with.
 
 `index.original.backup.html` is the original lightning-rangefinder version of the
 app, kept for reference. It is not part of the build, and the rangefinder has been
