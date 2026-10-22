@@ -1,4 +1,26 @@
-# Storm Ranger — Desktop App (Windows)
+# Storm Ranger
+
+**Live site: https://kloppcake.github.io/weather-and-fish-radar/**
+
+That URL is the app. It needs no install, and on a phone you can add it to
+the home screen from the browser menu — it carries a web app manifest and a
+service worker, so it opens full-screen and still loads with no signal. The
+page itself is always fetched fresh, so you never open it to a stale sky;
+only the shell and icons are cached.
+
+The same `index.html` also runs as a Windows desktop app through Electron.
+Those instructions are below.
+
+> **One repo, one site.** Everything lives in this folder. There used to be a
+> second git repo in the parent directory pointing at the same GitHub remote
+> with an unrelated history; it has been disabled (its `.git` was renamed to
+> `.git-disabled-20261022`) so a push from there can no longer overwrite this
+> one. The loose copies still sitting in the parent folder are not used by
+> anything.
+
+---
+
+## Desktop App (Windows)
 
 A Tampa Bay storm and water station in a single window: live radar with a
 forecast loop, the local forecast, National Weather Service warnings, and a tide
@@ -158,6 +180,9 @@ Everything is keyless and free, and the app talks to these directly:
 | Forecast | Open-Meteo |
 | Warnings | US National Weather Service |
 | Tides and station observations | NOAA CO-OPS |
+
+Hosting is GitHub Pages, served from `main` at the repository root. A
+`.nojekyll` file keeps Pages from running the site through Jekyll.
 
 Radar tiles exist up to zoom 7 on the keyless feed, so zooming past that scales
 the last available level over a sharper basemap — expect the precipitation to
