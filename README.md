@@ -102,6 +102,10 @@ times still feed it; the switches only decide whether you also read the detail.
 Smaller bay stations carry tide predictions but no sensors; those tiles say so
 rather than showing a stale number.
 
+**And something else.** There is a lure hanging in the empty space under the
+tide card. It is not a button and it is not labelled. Clicking it is worth
+doing.
+
 **Settings** (top right) holds your location, tide station, units, radar
 appearance, and the detector tuning sliders that used to sit on the main page.
 Everything there is remembered between runs.

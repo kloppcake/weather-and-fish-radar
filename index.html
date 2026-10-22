@@ -468,6 +468,148 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .alert.open .body{display:block}
 
 /* ============================================================
+   THE LURE  —  a secret sitting in the rail's dead space
+   ============================================================ */
+.lurezone{
+  position:relative;height:96px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;user-select:none;
+}
+.lurezone .lureline{
+  position:absolute;top:0;left:50%;width:1px;height:38px;
+  background:linear-gradient(180deg, rgba(125,170,220,0), rgba(125,170,220,.45));
+}
+.lure{
+  position:relative;flex:0 0 auto;min-width:0;width:44px;height:44px;padding:0;margin-top:14px;
+  background:none;border:0;border-radius:50%;cursor:pointer;
+  animation:lureJig 1.9s ease-in-out infinite;
+  transform-origin:50% -14px;
+}
+.lure:hover:not(:disabled){background:none;border:0;animation-duration:.5s}
+.lure svg{width:44px;height:44px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.6))}
+@keyframes lureJig{
+  0%,100%{transform:rotate(-7deg) translateY(0)}
+  22%{transform:rotate(6deg) translateY(-2px)}
+  40%{transform:rotate(-4deg) translateY(1px)}
+  58%{transform:rotate(8deg) translateY(-3px)}
+  76%{transform:rotate(-5deg) translateY(1px)}
+}
+.lurehint{
+  position:absolute;bottom:6px;left:0;right:0;text-align:center;
+  font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;
+  color:var(--dim);opacity:.65;transition:opacity .18s, color .18s;pointer-events:none;
+}
+.lurezone:hover .lurehint{opacity:1;color:var(--accent)}
+@media (prefers-reduced-motion:reduce){ .lure{animation:none} }
+
+/* ============================================================
+   THE GAME
+   ============================================================ */
+.fg{
+  position:fixed;inset:0;z-index:120;display:none;
+  background:#02060d;overflow:hidden;
+}
+.fg.show{display:block}
+.fg.diving{animation:fgDive .5s cubic-bezier(.3,.9,.3,1)}
+@keyframes fgDive{ from{ transform:scale(.06); opacity:0; border-radius:50%; } to{ transform:scale(1); opacity:1; border-radius:0; } }
+#fgCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+.fg-top{
+  position:absolute;top:0;left:0;right:0;z-index:3;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px;
+  background:linear-gradient(180deg, rgba(2,6,13,.8), transparent);
+}
+.fg-stage{
+  font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+  text-shadow:0 2px 12px rgba(0,0,0,.8);
+}
+.fg-stage.hot{color:var(--thunder);animation:fgPulse .6s ease-in-out infinite}
+.fg-stage.bad{color:var(--bad);animation:none}
+@keyframes fgPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.fg-sub{font-size:11.5px;color:var(--muted);margin-top:4px;letter-spacing:.02em;text-transform:none;font-weight:500}
+.fg-close{
+  flex:0 0 auto;min-width:0;width:36px;height:36px;padding:0;font-size:17px;line-height:1;border-radius:9px;
+  background:rgba(8,14,24,.75);border:1px solid var(--border-hi);color:var(--text);
+}
+
+.fg-hud{
+  position:absolute;left:0;right:0;bottom:104px;z-index:3;
+  display:flex;flex-direction:column;gap:9px;padding:0 20px;max-width:520px;margin:0 auto;
+}
+.fg-bar{display:flex;align-items:center;gap:10px}
+.fg-bar > span{
+  flex:0 0 66px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:800;color:var(--dim);
+}
+.fg-bar .track{
+  flex:1 1 auto;height:12px;border-radius:99px;overflow:hidden;
+  background:rgba(4,9,18,.8);border:1px solid var(--border);
+}
+.fg-bar .track i{display:block;height:100%;width:0%;border-radius:99px;transition:width .09s linear}
+#fgTension{background:linear-gradient(90deg,#4ade80,#fbbf24 62%,#f87171 88%)}
+#fgDist{background:linear-gradient(90deg,rgba(125,211,252,.5),var(--accent))}
+.fg-bar.danger .track{border-color:rgba(248,113,113,.8);box-shadow:0 0 14px rgba(248,113,113,.45)}
+
+.fg-fight{
+  position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:3;
+  min-width:210px;padding:16px 34px;border-radius:14px;
+  font-size:17px;font-weight:800;letter-spacing:.14em;
+  background:linear-gradient(135deg, rgba(125,211,252,.26), rgba(167,139,250,.22));
+  border:1px solid rgba(125,211,252,.6);color:#eaf6ff;
+  box-shadow:0 10px 34px rgba(0,0,0,.5);
+}
+.fg-fight:active:not(:disabled){transform:translateX(-50%) translateY(2px) scale(.98)}
+.fg-fight.reeling{background:linear-gradient(135deg, rgba(251,191,36,.3), rgba(245,158,11,.2));border-color:rgba(251,191,36,.7);color:#fff5dd}
+.fg-fight:disabled{opacity:.45}
+
+/* ---- the catch card ---- */
+.fg-result{
+  position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(2,6,13,.76);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  overflow-y:auto;
+}
+.fg-card{
+  width:100%;max-width:420px;margin:auto;text-align:center;
+  background:#0b1421;border:1px solid var(--border-hi);border-radius:18px;
+  padding:26px 24px;box-shadow:0 26px 70px rgba(0,0,0,.7);
+  animation:fgPop .34s cubic-bezier(.2,1.1,.4,1);
+}
+@keyframes fgPop{from{transform:scale(.85) translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.fg-card.record{border-color:#fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,.2), 0 26px 70px rgba(0,0,0,.7)}
+.fg-card.lost{border-color:rgba(248,113,113,.6)}
+.fg-verdict{
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;margin-bottom:12px;
+}
+.fg-verdict.keep{color:#4ade80} .fg-verdict.under{color:var(--thunder)}
+.fg-verdict.over{color:#fb923c} .fg-verdict.rec{color:#fbbf24}
+.fg-verdict.rel{color:var(--accent)} .fg-verdict.lost{color:var(--bad)}
+.fg-species{font-size:27px;font-weight:750;color:#fff;line-height:1.15}
+.fg-latin{font-size:12px;font-style:italic;color:var(--dim);margin-top:3px}
+.fg-size{font-family:var(--mono);font-size:46px;font-weight:700;color:#fff;margin:14px 0 2px;line-height:1}
+.fg-size small{font-size:.32em;color:var(--muted);margin-left:5px;letter-spacing:.05em}
+.fg-weight{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.fg-rule{
+  margin-top:16px;padding:11px 13px;border-radius:11px;font-size:12.5px;line-height:1.55;
+  background:rgba(6,12,22,.7);border:1px solid var(--border);color:var(--text);
+}
+.fg-rule b{color:#fff}
+.fg-fine{font-size:10.5px;color:var(--dim);margin-top:12px;line-height:1.5}
+.fg-again{display:flex;gap:10px;margin-top:18px}
+.fg-again button{flex:1 1 0;min-width:0;padding:13px 10px;font-size:13.5px;font-weight:700}
+
+/* sits above the gauges, not across the top, where a long stage line
+   like "FISH IS RUNNING" would collide with it on a narrow screen */
+.fg-tally{
+  position:absolute;bottom:152px;left:20px;z-index:3;
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--dim);
+  background:rgba(8,14,24,.7);border:1px solid var(--border);border-radius:99px;padding:5px 12px;
+  pointer-events:none;
+}
+@media (max-width:560px){
+  .fg-species{font-size:22px} .fg-size{font-size:38px}
+  .fg-fight{min-width:170px;padding:14px 24px;font-size:15px}
+}
+
+/* ============================================================
    MODAL (settings)
    ============================================================ */
 .modal{
@@ -710,6 +852,27 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
           <h2><span>Solunar periods</span><span class="sub">moon overhead &amp; underfoot</span></h2>
           <div class="solunar" id="solunar"></div>
         </div>
+
+        <div class="lurezone" id="lureZone" role="button" tabindex="0" title="Something is nibbling down there">
+          <div class="lureline"></div>
+          <button class="lure" id="lureBtn" aria-label="Drop a line">
+            <svg viewBox="0 0 44 44" aria-hidden="true">
+              <defs>
+                <linearGradient id="lureG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#eab308"/><stop offset="1" stop-color="#b45309"/>
+                </linearGradient>
+              </defs>
+              <ellipse cx="22" cy="17" rx="6.5" ry="10" fill="url(#lureG)" stroke="#78350f" stroke-width="1"/>
+              <circle cx="20" cy="12" r="1.9" fill="#fff"/><circle cx="20.4" cy="12" r="0.9" fill="#111"/>
+              <path d="M22 27v5" stroke="#9ca3af" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M22 32c-3 0-5 2-5 4.5M22 32c3 0 5 2 5 4.5M22 32v5.5"
+                    stroke="#cbd5e1" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M17 36.5c0 1.6 1.2 2.6 2.4 2.6M27 36.5c0 1.6-1.2 2.6-2.4 2.6"
+                    stroke="#cbd5e1" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="lurehint">something's nibbling</div>
+        </div>
     </div>
   </div>
 
@@ -764,6 +927,22 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
   </footer>
 </div>
 
+
+<!-- ============ THE LURE ============ -->
+<div class="fg" id="fishGame" hidden role="dialog" aria-modal="true" aria-label="Fishing">
+  <canvas id="fgCanvas"></canvas>
+  <div class="fg-top">
+    <div class="fg-stage" id="fgStage">Waiting</div>
+    <button class="fg-close" id="fgClose" title="Back to the radar (Esc)">✕</button>
+  </div>
+  <div class="fg-tally" id="fgTally">0 landed</div>
+  <div class="fg-hud">
+    <div class="fg-bar"><span>Line</span><div class="track"><i id="fgTension"></i></div></div>
+    <div class="fg-bar"><span>Reeled in</span><div class="track"><i id="fgDist"></i></div></div>
+  </div>
+  <button class="fg-fight" id="fgFight">FIGHT</button>
+  <div class="fg-result" id="fgResult" hidden></div>
+</div>
 
 <!-- ============ SETTINGS ============ -->
 <div class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle">
@@ -2972,6 +3151,522 @@ setInterval(() => {
   renderNextTide(); renderSolunar(); renderTideNext();
 }, 30000);
 
+
+/* ================================================================
+   THE LURE  —  a fishing game hiding in the rail
+
+   Everything below is a toy. The species are real ones caught around
+   Tampa Bay and the size limits are roughly Florida's Gulf rules, but
+   they are here to make the catch card mean something, not to tell
+   anyone what they may keep. Rules change every season; the card says
+   so every single time.
+   ================================================================ */
+
+/* typical: the length range most of them come in at, in inches
+   max:     a genuinely big one for these waters
+   record:  about where the all-tackle record sits
+   min:     smallest you may keep, null when there is no size limit
+   slot:    upper end of a slot limit, null when there isn't one
+   pull:    how hard it fights, 0.6 lazy .. 1.8 arm-breaking
+   wc:      divisor in the old length-cubed weight estimate
+   w:       how often it shows up                                   */
+const FISH = [
+  { name:'Spotted Seatrout', latin:'Cynoscion nebulosus', typical:[13,19], max:28, record:39, min:15, slot:19,
+    pull:0.85, wc:3500, w:14, colour:'#9fb6a0', belly:'#e8eee6', bodyH:0.26, mark:'spots' },
+  { name:'Redfish',          latin:'Sciaenops ocellatus', typical:[17,28], max:44, record:54, min:18, slot:27,
+    pull:1.35, wc:2100, w:13, colour:'#c8763f', belly:'#f0d9bf', bodyH:0.30, mark:'eyespot' },
+  { name:'Snook',            latin:'Centropomus undecimalis', typical:[22,34], max:45, record:53, min:28, slot:33,
+    pull:1.6, wc:2400, w:8, colour:'#b9c4ce', belly:'#f2f6f9', bodyH:0.24, mark:'lateral' },
+  { name:'Mangrove Snapper', latin:'Lutjanus griseus', typical:[9,15], max:24, record:36, min:10, slot:null,
+    pull:0.95, wc:1900, w:12, colour:'#8a5a52', belly:'#d9c4b4', bodyH:0.33, mark:'none' },
+  { name:'Sheepshead',       latin:'Archosargus probatocephalus', typical:[11,18], max:26, record:30, min:12, slot:null,
+    pull:1.0, wc:1500, w:11, colour:'#c9c6bd', belly:'#eceae3', bodyH:0.42, mark:'bars' },
+  { name:'Spanish Mackerel', latin:'Scomberomorus maculatus', typical:[13,20], max:30, record:37, min:12, slot:null,
+    pull:1.15, wc:3200, w:10, colour:'#7f9bb3', belly:'#eef3f7', bodyH:0.20, mark:'spots' },
+  { name:'Black Drum',       latin:'Pogonias cromis', typical:[14,30], max:48, record:60, min:14, slot:24,
+    pull:1.3, wc:1500, w:7, colour:'#7d7f87', belly:'#cdcfd4', bodyH:0.38, mark:'bars' },
+  { name:'Florida Pompano',  latin:'Trachinotus carolinus', typical:[10,15], max:22, record:30, min:11, slot:null,
+    pull:1.2, wc:1700, w:7, colour:'#cfd6da', belly:'#f6e9c9', bodyH:0.36, mark:'none' },
+  { name:'Jack Crevalle',    latin:'Caranx hippos', typical:[12,26], max:40, record:50, min:null, slot:null,
+    pull:1.75, wc:1500, w:9, colour:'#b9ae72', belly:'#f1ead0', bodyH:0.37, mark:'none' },
+  { name:'Ladyfish',         latin:'Elops saurus', typical:[12,20], max:30, record:36, min:null, slot:null,
+    pull:1.1, wc:3800, w:9, colour:'#c4ccd4', belly:'#f4f7fa', bodyH:0.18, mark:'none' },
+  { name:'Hardhead Catfish', latin:'Ariopsis felis', typical:[9,15], max:22, record:28, min:null, slot:null,
+    pull:0.7, wc:2200, w:10, colour:'#6f6f70', belly:'#cfcfcf', bodyH:0.28, mark:'whiskers' },
+  { name:'Gulf Flounder',    latin:'Paralichthys albigutta', typical:[11,16], max:22, record:26, min:14, slot:null,
+    pull:0.65, wc:1400, w:6, colour:'#8a7f63', belly:'#ded5bd', bodyH:0.50, mark:'spots' },
+  { name:'Gag Grouper',      latin:'Mycteroperca microlepis', typical:[20,32], max:44, record:58, min:24, slot:null,
+    pull:1.5, wc:1300, w:5, colour:'#77736d', belly:'#c6c1b7', bodyH:0.34, mark:'none' },
+  { name:'Red Grouper',      latin:'Epinephelus morio', typical:[17,27], max:38, record:50, min:20, slot:null,
+    pull:1.4, wc:1250, w:5, colour:'#a8553f', belly:'#ddb79c', bodyH:0.35, mark:'none' },
+  { name:'King Mackerel',    latin:'Scomberomorus cavalla', typical:[22,38], max:55, record:72, min:24, slot:null,
+    pull:1.65, wc:3000, w:4, colour:'#6d8aa6', belly:'#eef3f7', bodyH:0.19, mark:'none' },
+  { name:'Cobia',            latin:'Rachycentron canadum', typical:[28,45], max:62, record:78, min:36, slot:null,
+    pull:1.7, wc:2100, w:3, colour:'#5c5a52', belly:'#d6d2c6', bodyH:0.22, mark:'lateral' },
+  { name:'Tripletail',       latin:'Lobotes surinamensis', typical:[15,24], max:34, record:40, min:18, slot:null,
+    pull:1.25, wc:1200, w:3, colour:'#6b5d4f', belly:'#c5b6a4', bodyH:0.45, mark:'none' },
+  { name:'Permit',           latin:'Trachinotus falcatus', typical:[14,26], max:38, record:48, min:11, slot:22,
+    pull:1.7, wc:1300, w:3, colour:'#d2d8dc', belly:'#f7f0da', bodyH:0.44, mark:'none' },
+  { name:'Hogfish',          latin:'Lachnolaimus maximus', typical:[13,20], max:28, record:36, min:14, slot:null,
+    pull:1.0, wc:1400, w:3, colour:'#c98b7a', belly:'#f0d4c6', bodyH:0.40, mark:'none' },
+  { name:'Bluefish',         latin:'Pomatomus saltatrix', typical:[11,18], max:28, record:45, min:12, slot:null,
+    pull:1.2, wc:2400, w:4, colour:'#87a2ae', belly:'#eaf1f4', bodyH:0.24, mark:'none' },
+  { name:'Pinfish',          latin:'Lagodon rhomboides', typical:[4,8], max:12, record:16, min:null, slot:null,
+    pull:0.6, wc:1600, w:8, colour:'#c6bd84', belly:'#eee8c8', bodyH:0.40, mark:'bars' },
+  { name:'Bonnethead Shark', latin:'Sphyrna tiburo', typical:[20,34], max:48, record:60, min:null, slot:null,
+    pull:1.45, wc:3600, w:3, colour:'#9aa3a8', belly:'#e3e7e9', bodyH:0.20, mark:'shark' },
+  { name:'Tarpon',           latin:'Megalops atlanticus', typical:[45,72], max:88, record:100, min:null, slot:null,
+    pull:1.9, wc:2000, w:2, colour:'#c3ccd4', belly:'#f6f9fb', bodyH:0.28, mark:'bigscale', release:'Tarpon over 40 inches must stay in the water. Catch and release only without a tag.' },
+  { name:'Goliath Grouper',  latin:'Epinephelus itajara', typical:[40,70], max:85, record:96, min:null, slot:null,
+    pull:2.0, wc:900, w:1, colour:'#7e7866', belly:'#c9c3ae', bodyH:0.40, mark:'spots', release:'Goliath grouper are a protected species. Release without removing it from the water.' }
+];
+
+const FISH_TOTAL_W = FISH.reduce((a, f) => a + f.w, 0);
+
+function rollFish(){
+  let r = Math.random() * FISH_TOTAL_W;
+  for (const f of FISH){ r -= f.w; if (r <= 0) return f; }
+  return FISH[0];
+}
+
+/* Most fish come in around the usual size, a few run big, and once in a
+   great while something turns up that should not exist. */
+function rollLength(f){
+  if (Math.random() < 0.004) return f.record + Math.random() * 2;      // the one you tell people about
+  const [lo, hi] = f.typical;
+  let L = lo + (hi - lo) * Math.pow(Math.random(), 0.85);
+  if (Math.random() < 0.14) L = hi + (f.max - hi) * Math.pow(Math.random(), 2.2);
+  return Math.max(2, L);
+}
+
+const estWeight = (f, L) => Math.pow(L, 3) / f.wc;
+
+function verdictFor(f, L){
+  if (L >= f.record) return { k:'rec', label:'All-tackle record class',
+    note:'A fish this size would be a record. Photograph it, weigh it on certified scales, and call a biologist before you do anything else.' };
+  if (f.release) return { k:'rel', label:'Protected — release', note:f.release };
+  if (f.min && L < f.min) return { k:'under', label:'Undersized — release',
+    note:'Under the ' + f.min + '-inch minimum. Back it goes.' };
+  if (f.slot && L > f.slot) return { k:'over', label:'Over the slot — release',
+    note:'The slot runs ' + f.min + ' to ' + f.slot + ' inches. This one is too big to keep.' };
+  if (!f.min && !f.slot) return { k:'keep', label:'No size limit', note:'No minimum on this one. Keeping it is up to you.' };
+  if (f.slot) return { k:'keep', label:'Keeper', note:'Inside the ' + f.min + ' to ' + f.slot + '-inch slot.' };
+  return { k:'keep', label:'Keeper', note:'Over the ' + f.min + '-inch minimum.' };
+}
+
+/* ================================================================
+   GAME STATE
+   ================================================================ */
+const FG = {
+  open:false, stage:'idle', fish:null, lengthIn:0,
+  dist:1, tension:0, stamina:1, surge:0, surgeT:0,
+  raf:0, last:0, tally:0, hookAt:0, shakeT:0,
+  fx:0, fy:0, fz:34, swim:0, flash:0
+};
+
+const fgCv = $('fgCanvas');
+const fgx = fgCv.getContext('2d');
+let FGW = 1, FGH = 1, FGD = 1;
+
+function fgSize(){
+  FGD = Math.min(window.devicePixelRatio || 1, 2);
+  const w = Math.max(1, Math.round(innerWidth)), h = Math.max(1, Math.round(innerHeight));
+  if (fgCv.width === Math.round(w * FGD) && fgCv.height === Math.round(h * FGD)) return;
+  FGW = w; FGH = h;
+  fgCv.width = Math.round(w * FGD); fgCv.height = Math.round(h * FGD);
+}
+
+/* ---------- a real perspective projection, software drawn ---------- */
+const FOCAL = () => fgCv.height * 0.95;
+function proj(x, y, z){
+  const s = FOCAL() / Math.max(z, 0.35);
+  return { x: fgCv.width / 2 + x * s, y: fgCv.height * 0.46 + y * s, s };
+}
+
+const snow = [];
+function seedSnow(){
+  snow.length = 0;
+  for (let i = 0; i < 150; i++)
+    snow.push({ x:(Math.random()-0.5)*46, y:(Math.random()-0.5)*30, z:2 + Math.random()*52, v:0.25+Math.random()*0.7 });
+}
+
+function drawScene(dt){
+  const W = fgCv.width, H = fgCv.height;
+  fgx.setTransform(1,0,0,1,0,0);
+
+  // water column: brighter at the surface, black below
+  const g = fgx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0,   '#0d3550');
+  g.addColorStop(0.35,'#082034');
+  g.addColorStop(1,   '#01060c');
+  fgx.fillStyle = g; fgx.fillRect(0, 0, W, H);
+
+  // light shafts coming down through the surface
+  fgx.save();
+  fgx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 6; i++){
+    const t = Date.now() / 5200 + i * 1.7;
+    const zx = Math.sin(t) * 16 + (i - 2.5) * 7;
+    const a = proj(zx, -16, 10 + i * 3), b = proj(zx * 1.5, 14, 10 + i * 3);
+    const sg = fgx.createLinearGradient(a.x, a.y, b.x, b.y);
+    sg.addColorStop(0, 'rgba(150,205,245,.11)');
+    sg.addColorStop(1, 'rgba(150,205,245,0)');
+    fgx.fillStyle = sg;
+    fgx.beginPath();
+    fgx.moveTo(a.x - 16 * a.s * 0.08, a.y); fgx.lineTo(a.x + 16 * a.s * 0.08, a.y);
+    fgx.lineTo(b.x + 42 * b.s * 0.08, b.y); fgx.lineTo(b.x - 42 * b.s * 0.08, b.y);
+    fgx.closePath(); fgx.fill();
+  }
+  fgx.restore();
+
+  // seafloor grid: the strongest depth cue we have
+  fgx.strokeStyle = 'rgba(110,160,200,.16)';
+  fgx.lineWidth = 1 * FGD;
+  for (let gz = 6; gz < 60; gz += 4){
+    const l = proj(-34, 9, gz), r = proj(34, 9, gz);
+    fgx.globalAlpha = Math.max(0, 1 - gz / 62);
+    fgx.beginPath(); fgx.moveTo(l.x, l.y); fgx.lineTo(r.x, r.y); fgx.stroke();
+  }
+  for (let gx = -30; gx <= 30; gx += 6){
+    const n = proj(gx, 9, 6), f = proj(gx, 9, 58);
+    fgx.globalAlpha = 0.5;
+    fgx.beginPath(); fgx.moveTo(n.x, n.y); fgx.lineTo(f.x, f.y); fgx.stroke();
+  }
+  fgx.globalAlpha = 1;
+
+  // marine snow drifting up past the lens
+  for (const p of snow){
+    p.y -= p.v * dt * 1.6;
+    if (p.y < -18) { p.y = 18; p.x = (Math.random()-0.5)*46; p.z = 2 + Math.random()*52; }
+    const q = proj(p.x, p.y, p.z);
+    if (q.s < 0.4) continue;
+    fgx.globalAlpha = Math.min(0.5, q.s * 0.015);
+    fgx.fillStyle = '#cfe6ff';
+    fgx.beginPath(); fgx.arc(q.x, q.y, Math.max(0.6, q.s * 0.012), 0, Math.PI*2); fgx.fill();
+  }
+  fgx.globalAlpha = 1;
+}
+
+/* ---------- the fish ---------- */
+function drawFish(f, px, py, L, bank, t){
+  const h = L * f.bodyH;
+  fgx.save();
+  fgx.translate(px, py);
+  fgx.rotate(bank);
+  fgx.scale(1, 1 + Math.sin(t * 5) * 0.03);
+
+  // tail
+  const sweep = Math.sin(t * 7) * 0.33;
+  fgx.beginPath();
+  fgx.moveTo(-L * 0.42, 0);
+  fgx.lineTo(-L * 0.62, -h * (0.62 + sweep));
+  fgx.quadraticCurveTo(-L * 0.52, 0, -L * 0.62, h * (0.62 - sweep));
+  fgx.closePath();
+  fgx.fillStyle = f.colour; fgx.globalAlpha = 0.9; fgx.fill(); fgx.globalAlpha = 1;
+
+  // body
+  const bg = fgx.createLinearGradient(0, -h, 0, h);
+  bg.addColorStop(0, f.colour);
+  bg.addColorStop(0.55, f.colour);
+  bg.addColorStop(1, f.belly);
+  fgx.beginPath();
+  fgx.moveTo(L * 0.5, 0);
+  fgx.quadraticCurveTo(L * 0.12, -h, -L * 0.42, 0);
+  fgx.quadraticCurveTo(L * 0.12,  h,  L * 0.5, 0);
+  fgx.closePath();
+  fgx.fillStyle = bg; fgx.fill();
+  fgx.strokeStyle = 'rgba(0,0,0,.35)'; fgx.lineWidth = Math.max(1, L * 0.008); fgx.stroke();
+
+  // dorsal + pectoral
+  fgx.fillStyle = f.colour; fgx.globalAlpha = 0.85;
+  fgx.beginPath();
+  fgx.moveTo(L * 0.12, -h * 0.82);
+  fgx.lineTo(-L * 0.1, -h * (f.mark === 'shark' ? 1.5 : 1.25));
+  fgx.lineTo(-L * 0.2, -h * 0.72);
+  fgx.closePath(); fgx.fill();
+  fgx.beginPath();
+  fgx.ellipse(L * 0.08, h * 0.42, L * 0.11, h * 0.2, 0.5 + sweep * 0.4, 0, Math.PI*2);
+  fgx.fill();
+  fgx.globalAlpha = 1;
+
+  // markings
+  fgx.save();
+  fgx.beginPath();
+  fgx.moveTo(L * 0.5, 0);
+  fgx.quadraticCurveTo(L * 0.12, -h, -L * 0.42, 0);
+  fgx.quadraticCurveTo(L * 0.12,  h,  L * 0.5, 0);
+  fgx.clip();
+  if (f.mark === 'spots'){
+    fgx.fillStyle = 'rgba(28,40,50,.5)';
+    for (let i = 0; i < 16; i++){
+      const a = (i * 97 % 100) / 100, b = (i * 53 % 100) / 100;
+      fgx.beginPath();
+      fgx.arc(L * (0.45 - a * 0.85), h * (b - 0.5) * 1.4, Math.max(1, L * 0.018), 0, Math.PI*2);
+      fgx.fill();
+    }
+  } else if (f.mark === 'bars'){
+    fgx.fillStyle = 'rgba(40,45,55,.42)';
+    for (let i = 0; i < 6; i++)
+      fgx.fillRect(L * (0.34 - i * 0.14), -h, L * 0.045, h * 2);
+  } else if (f.mark === 'lateral'){
+    fgx.fillStyle = 'rgba(25,32,42,.75)';
+    fgx.fillRect(-L * 0.42, -h * 0.06, L * 0.92, Math.max(1, h * 0.09));
+  } else if (f.mark === 'eyespot'){
+    fgx.fillStyle = 'rgba(20,25,30,.85)';
+    fgx.beginPath(); fgx.arc(-L * 0.36, -h * 0.1, Math.max(1.5, h * 0.17), 0, Math.PI*2); fgx.fill();
+  } else if (f.mark === 'bigscale'){
+    fgx.strokeStyle = 'rgba(255,255,255,.3)'; fgx.lineWidth = Math.max(1, L * 0.006);
+    for (let i = 0; i < 7; i++){
+      fgx.beginPath();
+      fgx.arc(L * (0.3 - i * 0.12), 0, h * 0.5, -0.9, 0.9);
+      fgx.stroke();
+    }
+  }
+  fgx.restore();
+
+  // eye
+  fgx.fillStyle = '#f3f7fa';
+  fgx.beginPath(); fgx.arc(L * 0.33, -h * 0.2, Math.max(1.5, L * 0.035), 0, Math.PI*2); fgx.fill();
+  fgx.fillStyle = '#0a1016';
+  fgx.beginPath(); fgx.arc(L * 0.345, -h * 0.2, Math.max(0.8, L * 0.019), 0, Math.PI*2); fgx.fill();
+
+  if (f.mark === 'whiskers'){
+    fgx.strokeStyle = 'rgba(40,40,40,.8)'; fgx.lineWidth = Math.max(1, L * 0.008);
+    for (const d of [-0.3, 0, 0.3]){
+      fgx.beginPath();
+      fgx.moveTo(L * 0.47, h * 0.1);
+      fgx.quadraticCurveTo(L * 0.62, h * (0.25 + d * 0.3), L * 0.7, h * (0.5 + d * 0.5));
+      fgx.stroke();
+    }
+  }
+  fgx.restore();
+}
+
+function drawLineAndFish(dt){
+  const t = Date.now() / 1000;
+  FG.swim += dt;
+
+  // where the fish is right now
+  const near = 3.2, far = 34;
+  FG.fz += ((near + (far - near) * FG.dist) - FG.fz) * Math.min(1, dt * 4);
+  const wob = FG.stage === 'fight' ? 1 : 0.35;
+  FG.fx = Math.sin(t * (0.7 + FG.surge * 1.6)) * 3.2 * wob + FG.surge * Math.sin(t * 9) * 1.4;
+  FG.fy = Math.sin(t * 0.9 + 1.2) * 1.5 * wob;
+
+  const p = proj(FG.fx, FG.fy, FG.fz);
+  const onScreenLen = Math.max(14, p.s * (FG.lengthIn || 16) * 0.013);
+
+  // the line, from the rod tip down to its mouth
+  if (FG.stage === 'fight' || FG.stage === 'hook' || FG.stage === 'wait'){
+    const tipX = fgCv.width * 0.5, tipY = -20;
+    fgx.strokeStyle = FG.tension > 0.75 ? 'rgba(255,170,170,.85)' : 'rgba(220,235,250,.55)';
+    fgx.lineWidth = Math.max(1, 1.6 * FGD);
+    fgx.beginPath();
+    fgx.moveTo(tipX, tipY);
+    const sag = (1 - FG.tension) * 90 * FGD;
+    fgx.quadraticCurveTo((tipX + p.x) / 2, (tipY + p.y) / 2 + sag, p.x + onScreenLen * 0.45, p.y);
+    fgx.stroke();
+  }
+
+  if (FG.stage === 'wait'){
+    // just the lure, jigging in the dark
+    const l = proj(0, 2.2 + Math.sin(t * 2) * 0.35, 11);
+    fgx.fillStyle = '#d7e4ef';
+    fgx.beginPath(); fgx.ellipse(l.x, l.y, l.s * 0.012, l.s * 0.028, Math.sin(t * 3) * 0.5, 0, Math.PI*2); fgx.fill();
+    fgx.fillStyle = 'rgba(251,191,36,.9)';
+    fgx.beginPath(); fgx.arc(l.x, l.y - l.s * 0.02, l.s * 0.006, 0, Math.PI*2); fgx.fill();
+    return;
+  }
+
+  if (!FG.fish) return;
+  const bank = Math.sin(t * 2.2) * 0.12 + FG.surge * 0.3;
+  drawFish(FG.fish, p.x, p.y, onScreenLen, bank, t);
+
+  if (FG.flash > 0){
+    FG.flash -= dt * 2.2;
+    fgx.fillStyle = 'rgba(255,255,255,' + Math.max(0, FG.flash * 0.25) + ')';
+    fgx.fillRect(0, 0, fgCv.width, fgCv.height);
+  }
+}
+
+/* ================================================================
+   LOOP + FIGHT
+   ================================================================ */
+function fgLoop(ts){
+  if (!FG.open) return;
+  FG.raf = requestAnimationFrame(fgLoop);
+  const dt = Math.min(0.05, (ts - FG.last) / 1000 || 0.016);
+  FG.last = ts;
+  fgSize();
+
+  if (FG.stage === 'fight'){
+    // the fish decides, on its own, to run
+    FG.surgeT -= dt;
+    if (FG.surgeT <= 0){
+      const running = FG.surge > 0.1;
+      FG.surge = running ? 0 : (0.5 + Math.random() * 0.5) * FG.stamina;
+      FG.surgeT = running ? (0.7 + Math.random() * 1.6) : (0.5 + Math.random() * 1.1);
+      if (!running) fgStage('FISH IS RUNNING', 'ease off — let it go', 'hot');
+      else fgStage('REEL', 'tap fight while it rests', '');
+    }
+    if (FG.surge > 0){
+      FG.dist = Math.min(1, FG.dist + FG.surge * FG.fish.pull * 0.085 * dt);
+      FG.tension = Math.min(1.2, FG.tension + FG.surge * FG.fish.pull * 0.30 * dt);
+    }
+    FG.tension = Math.max(0, FG.tension - 0.62 * dt);
+    FG.stamina = Math.max(0.12, FG.stamina - dt * 0.035);
+
+    if (FG.tension >= 1){ fgLose(); }
+    else if (FG.dist <= 0){ fgLand(); }
+    fgHud();
+  }
+
+  drawScene(dt);
+  drawLineAndFish(dt);
+}
+
+function fgHud(){
+  $('fgTension').style.width = Math.min(100, FG.tension * 100) + '%';
+  $('fgDist').style.width = Math.min(100, (1 - FG.dist) * 100) + '%';
+  $('fgTension').parentElement.parentElement.classList.toggle('danger', FG.tension > 0.78);
+  $('fgFight').classList.toggle('reeling', FG.surge > 0.1);
+}
+
+function fgStage(main, sub, cls){
+  $('fgStage').innerHTML = esc(main) + (sub ? '<div class="fg-sub">' + esc(sub) + '</div>' : '');
+  $('fgStage').className = 'fg-stage ' + (cls || '');
+}
+
+function fgPull(){
+  if (FG.stage !== 'fight') return;
+  const f = FG.fish;
+  const gain = 0.030 / (0.55 + f.pull * 0.6);
+  const cost = 0.085 * f.pull * (FG.surge > 0.1 ? 2.4 : 1);   // horsing a running fish is how lines break
+  FG.dist = Math.max(0, FG.dist - gain);
+  FG.tension = Math.min(1.2, FG.tension + cost);
+  FG.stamina = Math.max(0.12, FG.stamina - 0.012);
+  if (FG.tension >= 1) fgLose();
+  else if (FG.dist <= 0) fgLand();
+  fgHud();
+}
+
+function fgLand(){
+  FG.stage = 'landed';
+  FG.flash = 1;
+  FG.tally++;
+  $('fgTally').textContent = FG.tally + (FG.tally === 1 ? ' landed' : ' landed');
+  fgStage('LANDED', '', '');
+  $('fgFight').disabled = true;
+  showCatch(FG.fish, FG.lengthIn, null);
+}
+
+function fgLose(){
+  FG.stage = 'lost';
+  FG.tension = 0;
+  fgStage('LINE SNAPPED', '', 'bad');
+  $('fgFight').disabled = true;
+  showCatch(FG.fish, FG.lengthIn, 'snap');
+}
+
+/* ================================================================
+   THE CATCH CARD
+   ================================================================ */
+function showCatch(f, L, failure){
+  const box = $('fgResult');
+  if (failure){
+    box.innerHTML =
+      '<div class="fg-card lost">' +
+        '<div class="fg-verdict lost">Line snapped</div>' +
+        '<div class="fg-species">It got away</div>' +
+        '<div class="fg-latin">you will never know how big</div>' +
+        '<div class="fg-rule">Too much pressure while it was running. Let a fish take line when it wants to, and reel while it rests.</div>' +
+        '<div class="fg-again"><button id="fgAgain" class="primary">Cast again</button><button id="fgDone">Done</button></div>' +
+      '</div>';
+  } else {
+    const v = verdictFor(f, L);
+    const lbs = estWeight(f, L);
+    box.innerHTML =
+      '<div class="fg-card' + (v.k === 'rec' ? ' record' : '') + '">' +
+        '<div class="fg-verdict ' + v.k + '">' + esc(v.label) + '</div>' +
+        '<div class="fg-species">' + esc(f.name) + '</div>' +
+        '<div class="fg-latin">' + esc(f.latin) + '</div>' +
+        '<div class="fg-size">' + L.toFixed(1) + '<small>in</small></div>' +
+        '<div class="fg-weight">about ' + (lbs < 1 ? lbs.toFixed(2) : lbs.toFixed(1)) + ' lb · ' +
+          (f.min ? 'minimum ' + f.min + '"' : 'no minimum') +
+          (f.slot ? ' · slot to ' + f.slot + '"' : '') +
+          ' · record ' + f.record + '"</div>' +
+        '<div class="fg-rule">' + esc(v.note) + '</div>' +
+        '<div class="fg-fine">Sizes and limits here are part of a game, not a regulation. Florida rules change by season, species and zone — check the current FWC regulations before you keep anything.</div>' +
+        '<div class="fg-again"><button id="fgAgain" class="primary">Cast again</button><button id="fgDone">Done</button></div>' +
+      '</div>';
+  }
+  box.hidden = false;
+  $('fgAgain').onclick = fgCast;
+  $('fgDone').onclick = closeFishGame;
+}
+
+/* ================================================================
+   OPEN / CAST / CLOSE
+   ================================================================ */
+function fgCast(){
+  $('fgResult').hidden = true;
+  $('fgFight').disabled = false;
+  FG.fish = null; FG.lengthIn = 0;
+  FG.dist = 1; FG.tension = 0; FG.stamina = 1; FG.surge = 0; FG.surgeT = 0;
+  FG.fz = 34; FG.flash = 0;
+  FG.stage = 'wait';
+  fgStage('WAITING', 'something is down there', '');
+  fgHud();
+  clearTimeout(FG.hookAt);
+  FG.hookAt = setTimeout(() => {
+    if (FG.stage !== 'wait' || !FG.open) return;
+    FG.fish = rollFish();
+    FG.lengthIn = rollLength(FG.fish);
+    FG.stage = 'hook';
+    FG.flash = 0.8;
+    fgStage('FISH ON', 'start tapping fight', 'hot');
+    setTimeout(() => {
+      if (FG.stage !== 'hook' || !FG.open) return;
+      FG.stage = 'fight';
+      FG.surgeT = 0.9;
+    }, 700);
+  }, 1200 + Math.random() * 2300);
+}
+
+function openFishGame(){
+  const el = $('fishGame');
+  const r = $('lureZone').getBoundingClientRect();
+  el.style.transformOrigin = (r.left + r.width/2) + 'px ' + (r.top + r.height/2) + 'px';
+  el.hidden = false;
+  el.classList.add('show', 'diving');
+  setTimeout(() => el.classList.remove('diving'), 520);
+  FG.open = true; FG.tally = 0; FG.last = performance.now();
+  $('fgTally').textContent = '0 landed';
+  seedSnow(); fgSize();
+  cancelAnimationFrame(FG.raf);
+  FG.raf = requestAnimationFrame(fgLoop);
+  fgCast();
+}
+
+function closeFishGame(){
+  FG.open = false;
+  cancelAnimationFrame(FG.raf);
+  clearTimeout(FG.hookAt);
+  const el = $('fishGame');
+  el.classList.remove('show');
+  el.hidden = true;
+  $('fgResult').hidden = true;
+}
+
+$('lureZone').onclick = openFishGame;
+$('fgClose').onclick = closeFishGame;
+$('fgFight').addEventListener('pointerdown', e => { e.preventDefault(); fgPull(); });
+addEventListener('keydown', e => {
+  if (!FG.open) return;
+  if (e.key === 'Escape') closeFishGame();
+  if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); fgPull(); }
+});
+addEventListener('resize', () => { if (FG.open) fgSize(); });
 
 /* ================================================================
    GO
