@@ -1,0 +1,302 @@
+[
+ {
+  "slug": "spotted-seatrout",
+  "name": "Spotted Seatrout",
+  "latin": "Cynoscion nebulosus",
+  "file": "spotted-seatrout.jpg",
+  "title": "File:Spotted seatrout fish cynoscion nebulosus.jpg",
+  "license": "Public domain",
+  "author": "Raver Duane, U.S. Fish and Wildlife Service",
+  "source": "https://commons.wikimedia.org/wiki/File:Spotted_seatrout_fish_cynoscion_nebulosus.jpg"
+ },
+ {
+  "slug": "redfish",
+  "name": "Redfish",
+  "latin": "Sciaenops ocellatus",
+  "file": "redfish.jpg",
+  "title": "File:Sciaenops ocellatus.jpg",
+  "license": "Public domain",
+  "author": "United States Fish Commission",
+  "source": "https://commons.wikimedia.org/wiki/File:Sciaenops_ocellatus.jpg"
+ },
+ {
+  "slug": "snook",
+  "name": "Snook",
+  "latin": "Centropomus undecimalis",
+  "file": "snook.jpg",
+  "title": "File:Centropomus undecimalis Mexico.jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "jose_colorado-dapa",
+  "source": "https://commons.wikimedia.org/wiki/File:Centropomus_undecimalis_Mexico.jpg"
+ },
+ {
+  "slug": "mangrove-snapper",
+  "name": "Mangrove Snapper",
+  "latin": "Lutjanus griseus",
+  "file": "mangrove-snapper.jpg",
+  "title": "File:Mangrove snapper, Lutjanus griseus.jpg",
+  "license": "Public domain",
+  "author": "Everglades National Park",
+  "source": "https://commons.wikimedia.org/wiki/File:Mangrove_snapper,_Lutjanus_griseus.jpg"
+ },
+ {
+  "slug": "sheepshead",
+  "name": "Sheepshead",
+  "latin": "Archosargus probatocephalus",
+  "file": "sheepshead.jpg",
+  "title": "File:Archosargus probatocephalus (FDA 063).jpg",
+  "license": "Public domain",
+  "author": "The U.S. Food and Drug Administration",
+  "source": "https://commons.wikimedia.org/wiki/File:Archosargus_probatocephalus_(FDA_063).jpg"
+ },
+ {
+  "slug": "spanish-mackerel",
+  "name": "Spanish Mackerel",
+  "latin": "Scomberomorus maculatus",
+  "file": "spanish-mackerel.jpg",
+  "title": "File:Spanish mack photo3 exp.jpg",
+  "license": "Public domain",
+  "author": "NOAA",
+  "source": "https://commons.wikimedia.org/wiki/File:Spanish_mack_photo3_exp.jpg"
+ },
+ {
+  "slug": "black-drum",
+  "name": "Black Drum",
+  "latin": "Pogonias cromis",
+  "file": "black-drum.jpg",
+  "title": "File:Pogonias cromis (S0897) (12639311174).jpg",
+  "license": "CC BY 2.0",
+  "author": "Smithsonian Environmental Research Center",
+  "source": "https://commons.wikimedia.org/wiki/File:Pogonias_cromis_(S0897)_(12639311174).jpg"
+ },
+ {
+  "slug": "pompano",
+  "name": "Florida Pompano",
+  "latin": "Trachinotus carolinus",
+  "file": "pompano.jpg",
+  "title": "File:Trachinotus carolinus 9398856.jpg",
+  "license": "CC0",
+  "author": "Some pig",
+  "source": "https://commons.wikimedia.org/wiki/File:Trachinotus_carolinus_9398856.jpg"
+ },
+ {
+  "slug": "jack-crevalle",
+  "name": "Jack Crevalle",
+  "latin": "Caranx hippos",
+  "file": "jack-crevalle.jpg",
+  "title": "File:Caranx hippos.jpg",
+  "license": "Public domain",
+  "author": "Dr. Anthony R. Picciolo, NOAA NODC",
+  "source": "https://commons.wikimedia.org/wiki/File:Caranx_hippos.jpg"
+ },
+ {
+  "slug": "ladyfish",
+  "name": "Ladyfish",
+  "latin": "Elops saurus",
+  "file": "ladyfish.jpg",
+  "title": "File:Elops saurus.jpg",
+  "license": "Public domain",
+  "author": "SEFSC Pascagoula Laboratory; Collection of Brandi Noble, NOAA/NMFS/SEFSC",
+  "source": "https://commons.wikimedia.org/wiki/File:Elops_saurus.jpg"
+ },
+ {
+  "slug": "hardhead-catfish",
+  "name": "Hardhead Catfish",
+  "latin": "Ariopsis felis",
+  "file": "hardhead-catfish.jpg",
+  "title": "File:Ariopsis felis (FDA 099).jpg",
+  "license": "Public domain",
+  "author": "The U.S. Food and Drug Administration",
+  "source": "https://commons.wikimedia.org/wiki/File:Ariopsis_felis_(FDA_099).jpg"
+ },
+ {
+  "slug": "gulf-flounder",
+  "name": "Gulf Flounder",
+  "latin": "Paralichthys albigutta",
+  "file": "gulf-flounder.jpg",
+  "title": "File:Paralichthys albigutta (FDA 103).jpg",
+  "license": "Public domain",
+  "author": "The U.S. Food and Drug Administration",
+  "source": "https://commons.wikimedia.org/wiki/File:Paralichthys_albigutta_(FDA_103).jpg"
+ },
+ {
+  "slug": "gag-grouper",
+  "name": "Gag Grouper",
+  "latin": "Mycteroperca microlepis",
+  "file": "gag-grouper.jpg",
+  "title": "File:Mycteroperca microlepis (FDA 093).jpg",
+  "license": "Public domain",
+  "author": "The U.S. Food and Drug Administration",
+  "source": "https://commons.wikimedia.org/wiki/File:Mycteroperca_microlepis_(FDA_093).jpg"
+ },
+ {
+  "slug": "red-grouper",
+  "name": "Red Grouper",
+  "latin": "Epinephelus morio",
+  "file": "red-grouper.jpg",
+  "title": "File:Epinephelus morio1.jpg",
+  "license": "Public domain",
+  "author": "SEFSC Pascagoula Laboratory; Collection of Brandi Noble, NOAA/NMFS/SEFSC",
+  "source": "https://commons.wikimedia.org/wiki/File:Epinephelus_morio1.jpg"
+ },
+ {
+  "slug": "king-mackerel",
+  "name": "King Mackerel",
+  "latin": "Scomberomorus cavalla",
+  "file": "king-mackerel.jpg",
+  "title": "File:King mackerel ( Scomberomorus cavalla ).jpg",
+  "license": "Public domain",
+  "author": "NOAA's Fisheries Collection , SEFSC Pascagoula Laboratory; Collection of Brandi Noble, NOAA/NMFS/SEFSC",
+  "source": "https://commons.wikimedia.org/wiki/File:King_mackerel_(_Scomberomorus_cavalla_).jpg"
+ },
+ {
+  "slug": "tripletail",
+  "name": "Tripletail",
+  "latin": "Lobotes surinamensis",
+  "file": "tripletail.jpg",
+  "title": "File:Lobotes surinamensis 233989087.jpg",
+  "license": "CC0",
+  "author": "Sönke Bonde",
+  "source": "https://commons.wikimedia.org/wiki/File:Lobotes_surinamensis_233989087.jpg"
+ },
+ {
+  "slug": "hogfish",
+  "name": "Hogfish",
+  "latin": "Lachnolaimus maximus",
+  "file": "hogfish.jpg",
+  "title": "File:Lachnolaimus maximus 35229630.jpg",
+  "license": "CC BY 4.0",
+  "author": "marique",
+  "source": "https://commons.wikimedia.org/wiki/File:Lachnolaimus_maximus_35229630.jpg"
+ },
+ {
+  "slug": "bluefish",
+  "name": "Bluefish",
+  "latin": "Pomatomus saltatrix",
+  "file": "bluefish.jpg",
+  "title": "File:Pomatomus saltatrix.jpg",
+  "license": "Public domain",
+  "author": "NOAA",
+  "source": "https://commons.wikimedia.org/wiki/File:Pomatomus_saltatrix.jpg"
+ },
+ {
+  "slug": "pinfish",
+  "name": "Pinfish",
+  "latin": "Lagodon rhomboides",
+  "file": "pinfish.jpg",
+  "title": "File:Lagodon rhomboides NOAA.jpg",
+  "license": "Public domain",
+  "author": "SEFSC Pascagoula Laboratory; Collection of Brandi Noble, NOAA/NMFS/SEFSC, at Flickr: NOAA Photo Library",
+  "source": "https://commons.wikimedia.org/wiki/File:Lagodon_rhomboides_NOAA.jpg"
+ },
+ {
+  "slug": "bonnethead",
+  "name": "Bonnethead Shark",
+  "latin": "Sphyrna tiburo",
+  "file": "bonnethead.jpg",
+  "title": "File:Bonnethead shark Aquarium of the Pacific.jpg",
+  "license": "CC BY-SA 2.0",
+  "author": "Eric Kilby from Somerville, MA, USA",
+  "source": "https://commons.wikimedia.org/wiki/File:Bonnethead_shark_Aquarium_of_the_Pacific.jpg"
+ },
+ {
+  "slug": "red-snapper",
+  "name": "Red Snapper",
+  "latin": "Lutjanus campechanus",
+  "file": "red-snapper.jpg",
+  "title": "File:Lutjanus campechanus.jpg",
+  "license": "Public domain",
+  "author": "SEFSC Pascagoula Laboratory; Collection of Brandi Noble, NOAA/NMFS/SEFSC",
+  "source": "https://commons.wikimedia.org/wiki/File:Lutjanus_campechanus.jpg"
+ },
+ {
+  "slug": "lane-snapper",
+  "name": "Lane Snapper",
+  "latin": "Lutjanus synagris",
+  "file": "lane-snapper.jpg",
+  "title": "File:Lutjanus synagris.jpg",
+  "license": "Public domain",
+  "author": "SEFSC Pascagoula Laboratory; Collection of Brandi Noble, NOAA/NMFS/SEFSC - NOAA Photo Library",
+  "source": "https://commons.wikimedia.org/wiki/File:Lutjanus_synagris.jpg"
+ },
+ {
+  "slug": "gray-triggerfish",
+  "name": "Gray Triggerfish",
+  "latin": "Balistes capriscus",
+  "file": "gray-triggerfish.jpg",
+  "title": "File:Balistes capriscus 252907206.jpg",
+  "license": "CC BY 4.0",
+  "author": "Karim Haddad",
+  "source": "https://commons.wikimedia.org/wiki/File:Balistes_capriscus_252907206.jpg"
+ },
+ {
+  "slug": "striped-mullet",
+  "name": "Striped Mullet",
+  "latin": "Mugil cephalus",
+  "file": "striped-mullet.jpg",
+  "title": "File:Mugil cephalus 251553194.jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "Nathan Ruser",
+  "source": "https://commons.wikimedia.org/wiki/File:Mugil_cephalus_251553194.jpg"
+ },
+ {
+  "slug": "barracuda",
+  "name": "Great Barracuda",
+  "latin": "Sphyraena barracuda",
+  "file": "barracuda.jpg",
+  "title": "File:Sphyraena barracuda by NPS.jpg",
+  "license": "Public domain",
+  "author": "NPS photo - Larry Basch",
+  "source": "https://commons.wikimedia.org/wiki/File:Sphyraena_barracuda_by_NPS.jpg"
+ },
+ {
+  "slug": "tarpon",
+  "name": "Tarpon",
+  "latin": "Megalops atlanticus",
+  "file": "tarpon.jpg",
+  "title": "File:Atlantic tarpon.jpg",
+  "license": "Public domain",
+  "author": "from NOAA's Southeast Fisheries Science Center.",
+  "source": "https://commons.wikimedia.org/wiki/File:Atlantic_tarpon.jpg"
+ },
+ {
+  "slug": "cobia",
+  "name": "Cobia",
+  "latin": "Rachycentron canadum",
+  "file": "cobia.jpg",
+  "title": "File:Rachycentron canadum.jpg",
+  "license": "Public domain",
+  "author": "Jorge Alarcon or Dr. Daniel Benetti",
+  "source": "https://commons.wikimedia.org/wiki/File:Rachycentron_canadum.jpg"
+ },
+ {
+  "slug": "goliath-grouper",
+  "name": "Goliath Grouper",
+  "latin": "Epinephelus itajara",
+  "file": "goliath-grouper.jpg",
+  "title": "File:Goliathgrouper1.jpg",
+  "license": "Public domain",
+  "author": "Joe Contillo, NOAA fishery biologist",
+  "source": "https://commons.wikimedia.org/wiki/File:Goliathgrouper1.jpg"
+ },
+ {
+  "slug": "sawfish",
+  "name": "Smalltooth Sawfish",
+  "latin": "Pristis pectinata",
+  "file": "sawfish.jpg",
+  "title": "File:Pristis pectinata juvenile.jpg",
+  "license": "Public domain",
+  "author": "NOAA",
+  "source": "https://commons.wikimedia.org/wiki/File:Pristis_pectinata_juvenile.jpg"
+ },
+ {
+  "slug": "swordfish",
+  "name": "Swordfish",
+  "latin": "Xiphias gladius",
+  "file": "swordfish.jpg",
+  "title": "File:Xiphias gladius 23056964.jpg",
+  "license": "CC BY-SA 4.0",
+  "author": "vtzanatos",
+  "source": "https://commons.wikimedia.org/wiki/File:Xiphias_gladius_23056964.jpg"
+ }
+]

@@ -630,8 +630,77 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 /* sits above the gauges, not across the top, where a long stage line
    like "FISH IS RUNNING" would collide with it on a narrow screen */
 .fg-shot{
-  display:block;width:100%;max-width:320px;margin:0 auto 6px;
-  border-radius:12px;border:1px solid var(--border-hi);background:#0a2834;
+  display:block;width:100%;max-width:340px;height:185px;object-fit:cover;
+  margin:0 auto 12px;border-radius:12px;border:1px solid var(--border-hi);background:#0a2834;
+}
+.fg-tier{
+  display:inline-block;margin-bottom:10px;padding:5px 14px;border-radius:99px;
+  font-size:10px;font-weight:800;letter-spacing:.18em;
+}
+.fg-tier.rare{color:#c4b5fd;background:rgba(167,139,250,.16);border:1px solid rgba(167,139,250,.6)}
+.fg-tier.ultra{
+  color:#1c1203;background:linear-gradient(135deg,#fde68a,#f59e0b);border:1px solid #fbbf24;
+  box-shadow:0 0 22px rgba(251,191,36,.55);
+}
+.fg-flavour{font-size:12.5px;font-style:italic;color:var(--accent);margin-top:10px;line-height:1.5}
+
+/* ---- the slam ---- */
+.fg-splash{
+  position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;overflow:hidden;pointer-events:none;
+  background:radial-gradient(circle at 50% 46%, rgba(10,60,80,.55), rgba(2,8,14,.92) 72%);
+}
+.fg-splash .rays{
+  position:absolute;width:210vmax;height:210vmax;left:50%;top:46%;
+  transform:translate(-50%,-50%);opacity:0;
+  background:repeating-conic-gradient(from 0deg at 50% 50%,
+    rgba(125,211,252,.16) 0deg 5deg, transparent 5deg 14deg);
+}
+.fg-splash .burst{
+  position:absolute;left:50%;top:46%;width:14px;height:14px;border-radius:50%;
+  transform:translate(-50%,-50%) scale(0);opacity:0;
+  box-shadow:0 0 0 3px rgba(255,255,255,.9), 0 0 60px 20px rgba(125,211,252,.6);
+}
+.fg-splash .word{
+  position:relative;font-size:clamp(42px,13vw,120px);font-weight:900;letter-spacing:-.02em;
+  color:#fff;text-shadow:0 0 30px rgba(125,211,252,.8), 0 8px 0 rgba(10,40,60,.85);
+  -webkit-text-stroke:2px rgba(8,30,45,.85);
+  transform:scale(5);opacity:0;white-space:nowrap;
+}
+.fg-splash .sub{
+  position:relative;margin-top:10px;font-size:clamp(11px,2.4vw,15px);
+  letter-spacing:.3em;text-transform:uppercase;font-weight:700;color:#bfe3ff;opacity:0;
+}
+.fg-splash.run .rays{animation:fgRays 1.65s ease-out forwards}
+.fg-splash.run .burst{animation:fgBurst .55s cubic-bezier(.1,.8,.3,1) forwards}
+.fg-splash.run .word{animation:fgSlam 1.65s cubic-bezier(.15,1.5,.4,1) forwards}
+.fg-splash.run .sub{animation:fgSubIn 1.65s ease-out forwards}
+@keyframes fgRays{
+  0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.4)}
+  18%{opacity:.85}
+  100%{opacity:0;transform:translate(-50%,-50%) rotate(26deg) scale(1)}
+}
+@keyframes fgBurst{0%{transform:translate(-50%,-50%) scale(0);opacity:1}100%{transform:translate(-50%,-50%) scale(26);opacity:0}}
+@keyframes fgSlam{
+  0%{transform:scale(5) rotate(-7deg);opacity:0}
+  12%{transform:scale(1) rotate(0deg);opacity:1}
+  16%{transform:scale(1.1) rotate(1.5deg)}
+  20%{transform:scale(.97) rotate(-1deg)}
+  24%{transform:scale(1.03)}
+  28%{transform:scale(1)}
+  82%{transform:scale(1);opacity:1}
+  100%{transform:scale(1.35);opacity:0}
+}
+@keyframes fgSubIn{0%,14%{opacity:0;letter-spacing:.9em}30%{opacity:1;letter-spacing:.3em}82%{opacity:1}100%{opacity:0}}
+.fg-splash.rare .word{color:#ddd0ff;text-shadow:0 0 36px rgba(167,139,250,.95), 0 8px 0 rgba(40,20,70,.85)}
+.fg-splash.ultra .word{color:#fff3cf;text-shadow:0 0 46px rgba(251,191,36,1), 0 8px 0 rgba(70,40,0,.9)}
+.fg-splash.ultra .rays{
+  background:repeating-conic-gradient(from 0deg at 50% 50%,
+    rgba(251,191,36,.26) 0deg 5deg, transparent 5deg 14deg);
+}
+@media (prefers-reduced-motion:reduce){
+  .fg-splash.run .word,.fg-splash.run .rays,.fg-splash.run .burst,.fg-splash.run .sub{animation-duration:.01s}
+  .fg-splash.run .word{transform:none;opacity:1}
 }
 
 .fg-tally{
@@ -980,6 +1049,12 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
     <div class="fg-bar"><span>Reeled in</span><div class="track"><i id="fgDist"></i></div></div>
   </div>
   <button class="fg-fight" id="fgFight">FIGHT</button>
+  <div class="fg-splash" id="fgSplash" hidden aria-hidden="true">
+    <div class="rays"></div>
+    <div class="burst"></div>
+    <div class="word" id="fgSplashWord">FISH ON!</div>
+    <div class="sub" id="fgSplashSub">it just ate the lure</div>
+  </div>
   <div class="fg-result" id="fgResult" hidden></div>
 </div>
 
@@ -3201,63 +3276,88 @@ setInterval(() => {
    so every single time.
    ================================================================ */
 
-/* typical: the length range most of them come in at, in inches
+/* Thirty species caught around Tampa Bay, each with a photograph in
+   ./fish. Twenty-five turn up normally, four are rare, and one should
+   not be in here at all.
+
+   typical: the length range most of them come in at, in inches
    max:     a genuinely big one for these waters
    record:  about where the all-tackle record sits
    min:     smallest you may keep, null when there is no size limit
    slot:    upper end of a slot limit, null when there isn't one
-   pull:    how hard it fights, 0.6 lazy .. 1.8 arm-breaking
+   pull:    how hard it fights, 0.6 lazy .. 2.0 arm-breaking
    wc:      divisor in the old length-cubed weight estimate
-   w:       how often it shows up                                   */
+   w:       how often it shows up
+   tier:    '', 'rare' or 'ultra'                                     */
 const FISH = [
-  { name:'Spotted Seatrout', latin:'Cynoscion nebulosus', typical:[13,19], max:28, record:39, min:15, slot:19,
-    pull:0.85, wc:3500, w:14, colour:'#9fb6a0', belly:'#e8eee6', bodyH:0.26, mark:'spots' },
-  { name:'Redfish',          latin:'Sciaenops ocellatus', typical:[17,28], max:44, record:54, min:18, slot:27,
-    pull:1.35, wc:2100, w:13, colour:'#c8763f', belly:'#f0d9bf', bodyH:0.30, mark:'eyespot' },
-  { name:'Snook',            latin:'Centropomus undecimalis', typical:[22,34], max:45, record:53, min:28, slot:33,
+  { img:'spotted-seatrout', name:'Spotted Seatrout', latin:'Cynoscion nebulosus', typical:[13,19], max:28, record:39, min:15, slot:19,
+    pull:0.85, wc:3500, w:13, colour:'#9fb6a0', belly:'#e8eee6', bodyH:0.26, mark:'spots' },
+  { img:'redfish', name:'Redfish', latin:'Sciaenops ocellatus', typical:[17,28], max:44, record:54, min:18, slot:27,
+    pull:1.35, wc:2100, w:12, colour:'#c8763f', belly:'#f0d9bf', bodyH:0.30, mark:'eyespot' },
+  { img:'snook', name:'Snook', latin:'Centropomus undecimalis', typical:[22,34], max:45, record:53, min:28, slot:33,
     pull:1.6, wc:2400, w:8, colour:'#b9c4ce', belly:'#f2f6f9', bodyH:0.24, mark:'lateral' },
-  { name:'Mangrove Snapper', latin:'Lutjanus griseus', typical:[9,15], max:24, record:36, min:10, slot:null,
-    pull:0.95, wc:1900, w:12, colour:'#8a5a52', belly:'#d9c4b4', bodyH:0.33, mark:'none' },
-  { name:'Sheepshead',       latin:'Archosargus probatocephalus', typical:[11,18], max:26, record:30, min:12, slot:null,
-    pull:1.0, wc:1500, w:11, colour:'#c9c6bd', belly:'#eceae3', bodyH:0.42, mark:'bars' },
-  { name:'Spanish Mackerel', latin:'Scomberomorus maculatus', typical:[13,20], max:30, record:37, min:12, slot:null,
-    pull:1.15, wc:3200, w:10, colour:'#7f9bb3', belly:'#eef3f7', bodyH:0.20, mark:'spots' },
-  { name:'Black Drum',       latin:'Pogonias cromis', typical:[14,30], max:48, record:60, min:14, slot:24,
+  { img:'mangrove-snapper', name:'Mangrove Snapper', latin:'Lutjanus griseus', typical:[9,15], max:24, record:36, min:10, slot:null,
+    pull:0.95, wc:1900, w:11, colour:'#8a5a52', belly:'#d9c4b4', bodyH:0.33, mark:'none' },
+  { img:'sheepshead', name:'Sheepshead', latin:'Archosargus probatocephalus', typical:[11,18], max:26, record:30, min:12, slot:null,
+    pull:1.0, wc:1500, w:10, colour:'#c9c6bd', belly:'#eceae3', bodyH:0.42, mark:'bars' },
+  { img:'spanish-mackerel', name:'Spanish Mackerel', latin:'Scomberomorus maculatus', typical:[13,20], max:30, record:37, min:12, slot:null,
+    pull:1.15, wc:3200, w:9, colour:'#7f9bb3', belly:'#eef3f7', bodyH:0.20, mark:'spots' },
+  { img:'black-drum', name:'Black Drum', latin:'Pogonias cromis', typical:[14,30], max:48, record:60, min:14, slot:24,
     pull:1.3, wc:1500, w:7, colour:'#7d7f87', belly:'#cdcfd4', bodyH:0.38, mark:'bars' },
-  { name:'Florida Pompano',  latin:'Trachinotus carolinus', typical:[10,15], max:22, record:30, min:11, slot:null,
+  { img:'pompano', name:'Florida Pompano', latin:'Trachinotus carolinus', typical:[10,15], max:22, record:30, min:11, slot:null,
     pull:1.2, wc:1700, w:7, colour:'#cfd6da', belly:'#f6e9c9', bodyH:0.36, mark:'none' },
-  { name:'Jack Crevalle',    latin:'Caranx hippos', typical:[12,26], max:40, record:50, min:null, slot:null,
-    pull:1.75, wc:1500, w:9, colour:'#b9ae72', belly:'#f1ead0', bodyH:0.37, mark:'none' },
-  { name:'Ladyfish',         latin:'Elops saurus', typical:[12,20], max:30, record:36, min:null, slot:null,
-    pull:1.1, wc:3800, w:9, colour:'#c4ccd4', belly:'#f4f7fa', bodyH:0.18, mark:'none' },
-  { name:'Hardhead Catfish', latin:'Ariopsis felis', typical:[9,15], max:22, record:28, min:null, slot:null,
-    pull:0.7, wc:2200, w:10, colour:'#6f6f70', belly:'#cfcfcf', bodyH:0.28, mark:'whiskers' },
-  { name:'Gulf Flounder',    latin:'Paralichthys albigutta', typical:[11,16], max:22, record:26, min:14, slot:null,
+  { img:'jack-crevalle', name:'Jack Crevalle', latin:'Caranx hippos', typical:[12,26], max:40, record:50, min:null, slot:null,
+    pull:1.75, wc:1500, w:8, colour:'#b9ae72', belly:'#f1ead0', bodyH:0.37, mark:'none' },
+  { img:'ladyfish', name:'Ladyfish', latin:'Elops saurus', typical:[12,20], max:30, record:36, min:null, slot:null,
+    pull:1.1, wc:3800, w:8, colour:'#c4ccd4', belly:'#f4f7fa', bodyH:0.18, mark:'none' },
+  { img:'hardhead-catfish', name:'Hardhead Catfish', latin:'Ariopsis felis', typical:[9,15], max:22, record:28, min:null, slot:null,
+    pull:0.7, wc:2200, w:9, colour:'#6f6f70', belly:'#cfcfcf', bodyH:0.28, mark:'whiskers' },
+  { img:'gulf-flounder', name:'Gulf Flounder', latin:'Paralichthys albigutta', typical:[11,16], max:22, record:26, min:14, slot:null,
     pull:0.65, wc:1400, w:6, colour:'#8a7f63', belly:'#ded5bd', bodyH:0.50, mark:'spots' },
-  { name:'Gag Grouper',      latin:'Mycteroperca microlepis', typical:[20,32], max:44, record:58, min:24, slot:null,
+  { img:'gag-grouper', name:'Gag Grouper', latin:'Mycteroperca microlepis', typical:[20,32], max:44, record:58, min:24, slot:null,
     pull:1.5, wc:1300, w:5, colour:'#77736d', belly:'#c6c1b7', bodyH:0.34, mark:'none' },
-  { name:'Red Grouper',      latin:'Epinephelus morio', typical:[17,27], max:38, record:50, min:20, slot:null,
+  { img:'red-grouper', name:'Red Grouper', latin:'Epinephelus morio', typical:[17,27], max:38, record:50, min:20, slot:null,
     pull:1.4, wc:1250, w:5, colour:'#a8553f', belly:'#ddb79c', bodyH:0.35, mark:'none' },
-  { name:'King Mackerel',    latin:'Scomberomorus cavalla', typical:[22,38], max:55, record:72, min:24, slot:null,
+  { img:'king-mackerel', name:'King Mackerel', latin:'Scomberomorus cavalla', typical:[22,38], max:55, record:72, min:24, slot:null,
     pull:1.65, wc:3000, w:4, colour:'#6d8aa6', belly:'#eef3f7', bodyH:0.19, mark:'none' },
-  { name:'Cobia',            latin:'Rachycentron canadum', typical:[28,45], max:62, record:78, min:36, slot:null,
-    pull:1.7, wc:2100, w:3, colour:'#5c5a52', belly:'#d6d2c6', bodyH:0.22, mark:'lateral' },
-  { name:'Tripletail',       latin:'Lobotes surinamensis', typical:[15,24], max:34, record:40, min:18, slot:null,
+  { img:'tripletail', name:'Tripletail', latin:'Lobotes surinamensis', typical:[15,24], max:34, record:40, min:18, slot:null,
     pull:1.25, wc:1200, w:3, colour:'#6b5d4f', belly:'#c5b6a4', bodyH:0.45, mark:'none' },
-  { name:'Permit',           latin:'Trachinotus falcatus', typical:[14,26], max:38, record:48, min:11, slot:22,
-    pull:1.7, wc:1300, w:3, colour:'#d2d8dc', belly:'#f7f0da', bodyH:0.44, mark:'none' },
-  { name:'Hogfish',          latin:'Lachnolaimus maximus', typical:[13,20], max:28, record:36, min:14, slot:null,
+  { img:'hogfish', name:'Hogfish', latin:'Lachnolaimus maximus', typical:[13,20], max:28, record:36, min:14, slot:null,
     pull:1.0, wc:1400, w:3, colour:'#c98b7a', belly:'#f0d4c6', bodyH:0.40, mark:'none' },
-  { name:'Bluefish',         latin:'Pomatomus saltatrix', typical:[11,18], max:28, record:45, min:12, slot:null,
+  { img:'bluefish', name:'Bluefish', latin:'Pomatomus saltatrix', typical:[11,18], max:28, record:45, min:12, slot:null,
     pull:1.2, wc:2400, w:4, colour:'#87a2ae', belly:'#eaf1f4', bodyH:0.24, mark:'none' },
-  { name:'Pinfish',          latin:'Lagodon rhomboides', typical:[4,8], max:12, record:16, min:null, slot:null,
+  { img:'pinfish', name:'Pinfish', latin:'Lagodon rhomboides', typical:[4,8], max:12, record:16, min:null, slot:null,
     pull:0.6, wc:1600, w:8, colour:'#c6bd84', belly:'#eee8c8', bodyH:0.40, mark:'bars' },
-  { name:'Bonnethead Shark', latin:'Sphyrna tiburo', typical:[20,34], max:48, record:60, min:null, slot:null,
-    pull:1.45, wc:3600, w:3, colour:'#9aa3a8', belly:'#e3e7e9', bodyH:0.20, mark:'shark' },
-  { name:'Tarpon',           latin:'Megalops atlanticus', typical:[45,72], max:88, record:100, min:null, slot:null,
-    pull:1.9, wc:2000, w:2, colour:'#c3ccd4', belly:'#f6f9fb', bodyH:0.28, mark:'bigscale', release:'Tarpon over 40 inches must stay in the water. Catch and release only without a tag.' },
-  { name:'Goliath Grouper',  latin:'Epinephelus itajara', typical:[40,70], max:85, record:96, min:null, slot:null,
-    pull:2.0, wc:900, w:1, colour:'#7e7866', belly:'#c9c3ae', bodyH:0.40, mark:'spots', release:'Goliath grouper are a protected species. Release without removing it from the water.' }
+  { img:'bonnethead', name:'Bonnethead Shark', latin:'Sphyrna tiburo', typical:[20,34], max:48, record:60, min:null, slot:null,
+    pull:1.45, wc:3600, w:4, colour:'#9aa3a8', belly:'#e3e7e9', bodyH:0.20, mark:'shark' },
+  { img:'red-snapper', name:'Red Snapper', latin:'Lutjanus campechanus', typical:[15,24], max:34, record:44, min:16, slot:null,
+    pull:1.3, wc:1400, w:4, colour:'#b8402f', belly:'#edc3b4', bodyH:0.34, mark:'none' },
+  { img:'lane-snapper', name:'Lane Snapper', latin:'Lutjanus synagris', typical:[8,13], max:18, record:24, min:8, slot:null,
+    pull:0.85, wc:1700, w:6, colour:'#cf8a6a', belly:'#f2ddc9', bodyH:0.34, mark:'lateral' },
+  { img:'gray-triggerfish', name:'Gray Triggerfish', latin:'Balistes capriscus', typical:[12,18], max:24, record:30, min:15, slot:null,
+    pull:1.1, wc:1200, w:4, colour:'#8d8778', belly:'#cfc9ba', bodyH:0.46, mark:'none' },
+  { img:'striped-mullet', name:'Striped Mullet', latin:'Mugil cephalus', typical:[10,18], max:24, record:30, min:null, slot:null,
+    pull:0.9, wc:2200, w:7, colour:'#9aa7b0', belly:'#eef2f5', bodyH:0.25, mark:'lateral' },
+  { img:'barracuda', name:'Great Barracuda', latin:'Sphyraena barracuda', typical:[20,40], max:60, record:72, min:null, slot:null,
+    pull:1.6, wc:3400, w:3, colour:'#93a5ae', belly:'#eef3f6', bodyH:0.16, mark:'none' },
+
+  /* ---- rare ---- */
+  { img:'tarpon', name:'Tarpon', latin:'Megalops atlanticus', typical:[45,72], max:88, record:100, min:null, slot:null,
+    pull:1.9, wc:2000, w:1.2, tier:'rare', colour:'#c3ccd4', belly:'#f6f9fb', bodyH:0.28, mark:'bigscale',
+    release:'Tarpon over 40 inches must stay in the water. Catch and release only without a tag.' },
+  { img:'cobia', name:'Cobia', latin:'Rachycentron canadum', typical:[28,45], max:62, record:78, min:36, slot:null,
+    pull:1.7, wc:2100, w:1.2, tier:'rare', colour:'#5c5a52', belly:'#d6d2c6', bodyH:0.22, mark:'lateral' },
+  { img:'goliath-grouper', name:'Goliath Grouper', latin:'Epinephelus itajara', typical:[40,70], max:85, record:96, min:null, slot:null,
+    pull:2.0, wc:900, w:1.0, tier:'rare', colour:'#7e7866', belly:'#c9c3ae', bodyH:0.40, mark:'spots',
+    release:'Goliath grouper are protected. Release without removing it from the water.' },
+  { img:'sawfish', name:'Smalltooth Sawfish', latin:'Pristis pectinata', typical:[60,120], max:180, record:216, min:null, slot:null,
+    pull:2.0, wc:1800, w:0.8, tier:'rare', colour:'#9e9c8e', belly:'#d7d4c6', bodyH:0.22, mark:'shark',
+    release:'Federally endangered. It is illegal to remove one from the water — cut the line as close as you safely can and report it to FWC.' },
+
+  /* ---- ultra rare: this has no business being in the bay ---- */
+  { img:'swordfish', name:'Swordfish', latin:'Xiphias gladius', typical:[50,90], max:150, record:180, min:47, slot:null,
+    pull:2.0, wc:1600, w:0.18, tier:'ultra', colour:'#4a5a6b', belly:'#dfe7ee', bodyH:0.22, mark:'none',
+    flavour:'A swordfish. In Tampa Bay. Nobody is going to believe you.' }
 ];
 
 const FISH_TOTAL_W = FISH.reduce((a, f) => a + f.w, 0);
@@ -3761,50 +3861,6 @@ function fgHud(){
   $('fgFight').classList.toggle('reeling', running && fighting);
 }
 
-/* ---------- a portrait of what you just pulled up ---------- */
-let portraitRaf = 0;
-function startPortrait(f, L){
-  const cv = $('fgShot');
-  if (!cv) return;
-  const ctx = cv.getContext('2d');
-  const d = Math.min(window.devicePixelRatio || 1, 2);
-  const w = 320, h = 150;
-  cv.width = w * d; cv.height = h * d;
-  cv.style.width = '100%'; cv.style.maxWidth = w + 'px'; cv.style.height = 'auto';
-
-  const t0 = performance.now();
-
-  const tick = (ts) => {
-    portraitRaf = requestAnimationFrame(tick);
-    const t = (ts - t0) / 1000;
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.clearRect(0, 0, cv.width, cv.height);
-
-    const g = ctx.createLinearGradient(0, 0, 0, cv.height);
-    g.addColorStop(0, '#13596b'); g.addColorStop(1, '#07222f');
-    ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, cv.height);
-
-    ctx.save();
-    ctx.globalAlpha = 0.5;
-    ctx.strokeStyle = 'rgba(190,240,255,.2)';
-    for (let i = 0; i < 5; i++){
-      ctx.beginPath();
-      ctx.moveTo((i * 0.27 + 0.05) * cv.width, 0);
-      ctx.lineTo((i * 0.27 + 0.16 + Math.sin(t * 0.5 + i) * 0.02) * cv.width, cv.height);
-      ctx.lineWidth = 10 * d; ctx.stroke();
-    }
-    ctx.restore();
-
-    // the same renderer that drew it underwater, pointed at this canvas
-    const len = Math.min(cv.width * 0.74, 250 * d);
-    drawFish(ctx, f, cv.width * 0.5, cv.height * 0.52 + Math.sin(t * 1.3) * 4 * d,
-             len, Math.sin(t * 0.9) * 0.07, t);
-  };
-  cancelAnimationFrame(portraitRaf);
-  portraitRaf = requestAnimationFrame(tick);
-}
-function stopPortrait(){ cancelAnimationFrame(portraitRaf); portraitRaf = 0; }
-
 /* ================================================================
    LOOP + FIGHT
    ================================================================ */
@@ -3896,8 +3952,10 @@ function showCatch(f, L, failure){
     const lbs = estWeight(f, L);
     box.innerHTML =
       '<div class="fg-card' + (v.k === 'rec' ? ' record' : '') + '">' +
+        (f.tier ? '<div class="fg-tier ' + f.tier + '">' +
+            (f.tier === 'ultra' ? '★ ULTRA RARE' : '◆ RARE CATCH') + '</div>' : '') +
         '<div class="fg-verdict ' + v.k + '">' + esc(v.label) + '</div>' +
-        '<canvas id="fgShot" class="fg-shot"></canvas>' +
+        '<img class="fg-shot" alt="' + esc(f.name) + '" src="./fish/' + f.img + '.jpg">' +
         '<div class="fg-species">' + esc(f.name) + '</div>' +
         '<div class="fg-latin">' + esc(f.latin) + '</div>' +
         '<div class="fg-size">' + L.toFixed(1) + '<small>in</small></div>' +
@@ -3906,12 +3964,15 @@ function showCatch(f, L, failure){
           (f.slot ? ' · slot to ' + f.slot + '"' : '') +
           ' · record ' + f.record + '"</div>' +
         '<div class="fg-rule">' + esc(v.note) + '</div>' +
+        (f.flavour ? '<div class="fg-flavour">' + esc(f.flavour) + '</div>' : '') +
         '<div class="fg-fine">Sizes and limits here are part of a game, not a regulation. Florida rules change by season, species and zone — check the current FWC regulations before you keep anything.</div>' +
         '<div class="fg-again"><button id="fgAgain" class="primary">Cast again</button><button id="fgDone">Done</button></div>' +
       '</div>';
   }
   box.hidden = false;
-  if (!failure) startPortrait(f, L);
+  // a missing photo should leave a tidy card, not a broken-image icon
+  const shot = box.querySelector('.fg-shot');
+  if (shot) shot.onerror = () => { shot.style.display = 'none'; };
   $('fgAgain').onclick = fgCast;
   $('fgDone').onclick = closeFishGame;
 }
@@ -3919,33 +3980,7 @@ function showCatch(f, L, failure){
 /* ================================================================
    OPEN / CAST / CLOSE
    ================================================================ */
-function fgCast(){
-  $('fgResult').hidden = true;
-  $('fgFight').disabled = false;
-  FG.fish = null; FG.lengthIn = 0;
-  FG.dist = 1; FG.tension = 0; FG.stamina = 1;
-  FG.surge = 0; FG.surgeTarget = 0; FG.surgeT = 0;
-  FG.fz = 34; FG.flash = 0; FG.fx = 0; FG.fy = 0;
-  stopPortrait();
-  FG.stage = 'wait';
-  fgStage('WAITING', 'something is down there', '');
-  fgHud();
-  clearTimeout(FG.hookAt);
-  FG.hookAt = setTimeout(() => {
-    if (FG.stage !== 'wait' || !FG.open) return;
-    FG.fish = rollFish();
-    FG.lengthIn = rollLength(FG.fish);
-    FG.stage = 'hook';
-    FG.flash = 0.8;
-    fgStage('FISH ON', 'start tapping fight', 'hot');
-    setTimeout(() => {
-      if (FG.stage !== 'hook' || !FG.open) return;
-      FG.stage = 'fight';
-      FG.surgeT = 0.9;
-      fgStage('HOOKED UP', 'watch the meter — reel only when it rests', '');
-    }, 700);
-  }, 1200 + Math.random() * 2300);
-}
+function fgCast(){ fgHookNow(); }
 
 function openFishGame(){
   const el = $('fishGame');
@@ -3959,18 +3994,56 @@ function openFishGame(){
   seedScene(); fgSize();
   cancelAnimationFrame(FG.raf);
   FG.raf = requestAnimationFrame(fgLoop);
-  fgCast();
+  fgHookNow();
+}
+
+/* Clicking the lure means something bit it. Slam that on the screen
+   before anything else, then drop straight into the fight — waiting in
+   the dark first buried the one moment worth announcing. */
+function fgHookNow(){
+  $('fgResult').hidden = true;
+  $('fgFight').disabled = false;
+  FG.dist = 1; FG.tension = 0; FG.stamina = 1;
+  FG.surge = 0; FG.surgeTarget = 0; FG.surgeT = 0;
+  FG.fz = 34; FG.flash = 0; FG.fx = 0; FG.fy = 0;
+  FG.fish = rollFish();
+  FG.lengthIn = rollLength(FG.fish);
+  FG.stage = 'hook';
+  fgStage('FISH ON', 'set the hook', 'hot');
+  fgHud();
+
+  const sp = $('fgSplash');
+  sp.className = 'fg-splash ' + (FG.fish.tier || '');
+  $('fgSplashWord').textContent = 'FISH ON!';
+  $('fgSplashSub').textContent = FG.fish.tier === 'ultra' ? 'something enormous'
+                               : FG.fish.tier === 'rare' ? 'that is not a normal bite'
+                               : 'it just ate the lure';
+  sp.hidden = false;
+  void sp.offsetWidth;
+  sp.classList.add('run');
+
+  clearTimeout(FG.hookAt);
+  FG.hookAt = setTimeout(() => {
+    sp.classList.remove('run');
+    sp.hidden = true;
+    if (!FG.open) return;
+    FG.flash = 0.9;
+    FG.stage = 'fight';
+    FG.surgeT = 1.0;
+    fgStage('HOOKED UP', 'watch the meter — reel only when it rests', '');
+  }, 1650);
 }
 
 function closeFishGame(){
   FG.open = false;
   cancelAnimationFrame(FG.raf);
-  stopPortrait();
   clearTimeout(FG.hookAt);
   const el = $('fishGame');
   el.classList.remove('show');
   el.hidden = true;
   $('fgResult').hidden = true;
+  $('fgSplash').hidden = true;
+  $('fgSplash').classList.remove('run');
 }
 
 $('lureZone').onclick = openFishGame;
