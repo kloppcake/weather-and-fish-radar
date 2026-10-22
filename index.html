@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05080f">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
 <title>Storm Ranger — Radar, Forecast &amp; Tides</title>
 <style>
 /* ============================================================
@@ -2972,6 +2976,15 @@ setInterval(() => {
 /* ================================================================
    GO
    ================================================================ */
+/* The service worker only exists on a real origin; opening index.html
+   straight off the disk has no scope to register against, and Electron
+   does not need it. Failing to register is never fatal. */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
 applySettings();
 sizeRain();
 rainLoop();
