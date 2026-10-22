@@ -12,8 +12,20 @@ and fishing analyzer built on the NOAA gauge at St. Petersburg.
 radar scans and a projected loop that runs an hour ahead. Drag to pan, use the
 + / − buttons or **Ctrl + scroll** to zoom, and the crosshair button snaps back
 to your location. The timeline under the map plays the loop; blue ticks are real
-scans, amber ticks are the forecast, and the white **NOW** line divides them.
+scans, amber ticks are the forecast, and the white **NOW** line divides them. The
+loop spends most of its length in the past, so the **NOW** button jumps straight
+to the latest scan and holds there; it lights up while that is the frame on
+screen.
 Dashed rings mark 10, 25 and 50 miles from where you are standing.
+
+The **pin button** in the map's control stack, under the zoom buttons, turns the
+tide gauges on and off and stays lit while they are showing. With it on, every
+NOAA gauge in the list appears on the radar in its own colour: a translucent six-mile disc with a hard
+outline, so the coastline and any rain read straight through it, plus a name chip
+that steps aside rather than printing over its neighbour. The gauge you are using
+is drawn brighter and on top. Click any disc to switch the tide panel to that
+gauge. The disc marks the gauge and the water around it; it is not a surveyed
+boundary, and the gauges themselves are points.
 
 Under the map sit the three numbers worth a glance before you go out: **water
 temperature, wind and gusts**. Wind is in knots because that is what the gauge
@@ -51,12 +63,19 @@ CO-OPS gauge at **St. Petersburg (8726520)**, changeable in Settings, and shows:
 - A **tide chart** covering the next 22 hours: the predicted curve, the highs and
   lows marked with their times, and the live gauge reading drawn in green over the
   last three hours so you can see surge against prediction.
-- A **tide table** for the next couple of days.
-- **Station observations** — water temperature, air temperature, wind and gusts,
-  barometer with its trend, moon phase, and the surge figure.
+- The **next four tides** as a compact strip, with the one coming up highlighted.
+
+Two further cards are switched **off by default** and can be turned on under
+*Fishing panel* in Settings:
+
+- **Station observations** — air temperature, wind and gusts, barometer with its
+  trend, moon phase, and the surge figure.
 - **Solunar periods** — the major windows when the moon is overhead and underfoot,
   and the minor ones at moonrise and moonset, computed from the moon's actual
   position for your coordinates rather than a lookup table.
+
+Hiding them changes nothing about the score. Wind, barometer and the solunar
+times still feed it; the switches only decide whether you also read the detail.
 
 Smaller bay stations carry tide predictions but no sensors; those tiles say so
 rather than showing a stale number.
@@ -163,9 +182,11 @@ coordinates into Settings.
 - **The map looks stretched, or part of it is blank** — this was a real bug and is
   fixed. The canvas now re-checks its own size before every frame, so it recovers
   on its own within a fraction of a second even when nothing reports the change.
-- **The map is fine but there is no colour on it** — then there is no rain in
-  range. Zoom out to check: the radar only paints where there is something to
-  paint, and Tampa is dry for most of the winter.
+- **The map is fine but there is no colour on it** — the map says so itself. When
+  nothing is falling inside the view, a note appears in the bottom-left reading
+  "No rain in view" along with the distance and bearing of the nearest rain, so an
+  empty radar can never be mistaken for a broken one. Tampa is dry for most of the
+  winter and this is the normal state of things.
 - **Nothing happens on `npm start` the very first time** — make sure `npm install`
   finished without a red `ERR!` at the end. If it errored, run `npm install` again.
 

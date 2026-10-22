@@ -259,7 +259,7 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 #map{position:absolute;inset:0;width:100%;height:100%;display:block}
 #mapfx{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:2;pointer-events:none}
 
-.map-ctrl{position:absolute;display:flex;flex-direction:column;gap:6px;z-index:3}
+.map-ctrl{position:absolute;display:flex;flex-direction:column;gap:6px;z-index:3;align-items:flex-end}
 .map-ctrl.tr{top:10px;right:10px}
 .map-ctrl button{
   flex:0 0 auto;min-width:0;width:34px;height:34px;padding:0;font-size:16px;font-weight:700;line-height:1;
@@ -268,6 +268,20 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-radius:9px;
 }
 .map-ctrl button:hover{background:rgba(30,48,76,.92);border-color:var(--accent)}
+.map-ctrl button.layer{
+  width:auto;padding:0 11px;gap:7px;color:var(--muted);
+  font-size:10.5px;font-weight:800;letter-spacing:.09em;
+}
+.map-ctrl button.layer .lbl{line-height:1;white-space:nowrap}
+.map-ctrl button.layer.on{
+  background:rgba(125,211,252,.22);border-color:rgba(125,211,252,.75);color:#eaf6ff;
+  box-shadow:0 0 12px rgba(125,211,252,.28);
+}
+.map-ctrl button.layer::after{
+  content:"OFF";font-size:8.5px;font-weight:800;letter-spacing:.06em;
+  padding:2px 5px;border-radius:99px;background:rgba(125,170,220,.16);color:var(--dim);
+}
+.map-ctrl button.layer.on::after{content:"ON";background:rgba(125,211,252,.3);color:#eaf6ff}
 .map-ctrl button svg{width:16px;height:16px}
 
 .map-badge{
@@ -280,6 +294,15 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .map-badge .s{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:3px;font-weight:700}
 .map-badge .s.future{color:var(--thunder)}
 .map-badge .s.now{color:var(--accent)}
+
+.echonote{
+  position:absolute;left:10px;bottom:10px;z-index:4;pointer-events:none;
+  background:rgba(8,14,24,.88);border:1px solid var(--border-hi);border-radius:10px;
+  padding:8px 11px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  font-size:11.5px;line-height:1.45;color:var(--muted);max-width:calc(100% - 120px);
+}
+.echonote b{color:var(--text);font-weight:650}
+.echonote .dry{color:var(--good);font-weight:700}
 
 .map-attr{
   position:absolute;bottom:4px;right:6px;z-index:3;pointer-events:none;
@@ -297,6 +320,14 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
   display:flex;align-items:center;justify-content:center;
 }
 .radar-bar .play svg{width:15px;height:15px}
+.radar-bar .nowbtn{
+  flex:0 0 auto;min-width:0;height:38px;padding:0 13px;border-radius:10px;
+  font-size:11px;font-weight:800;letter-spacing:.1em;
+}
+.radar-bar .nowbtn.live{
+  background:linear-gradient(135deg, rgba(125,211,252,.22), rgba(167,139,250,.18));
+  border-color:rgba(125,211,252,.55);color:#eaf6ff;
+}
 .track{
   position:relative;flex:1 1 240px;height:38px;display:flex;align-items:center;gap:2px;
   cursor:pointer;user-select:none;min-width:200px;
@@ -342,11 +373,11 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 /* ============================================================
    WEATHER PANEL (Google-style)
    ============================================================ */
-.wx-head{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;justify-content:space-between}
+.wx-head{display:flex;align-items:center;gap:18px 28px;flex-wrap:wrap;justify-content:space-between}
 .wx-now{display:flex;align-items:center;gap:16px;min-width:0;flex-wrap:wrap}
-.wx-now .ico{width:76px;height:76px;flex:0 0 auto}
+.wx-now .ico{width:64px;height:64px;flex:0 0 auto}
 .wx-temp{display:flex;align-items:flex-start;gap:6px}
-.wx-temp .deg{font-size:56px;line-height:.95;font-weight:300;letter-spacing:-.03em;color:#fff;font-family:var(--sans)}
+.wx-temp .deg{font-size:50px;line-height:.95;font-weight:300;letter-spacing:-.03em;color:#fff;font-family:var(--sans)}
 .wx-units{display:flex;flex-direction:column;font-size:14px;color:var(--dim);gap:1px;padding-top:5px}
 .wx-units button{
   flex:0 0 auto;min-width:0;padding:0 2px;background:none;border:0;color:var(--dim);
@@ -363,8 +394,14 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .wx-place .c{font-size:13px;color:var(--muted)}
 @media (max-width:700px){ .wx-place{text-align:left} .wx-facts{white-space:normal} }
 
-.wx-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px;margin-top:16px}
-.tile{background:rgba(6,12,22,.55);border:1px solid var(--border);border-radius:11px;padding:11px 12px}
+/* Cap how wide a tile may get. Stretched across a very wide window they
+   turn into eight mostly-empty rectangles that are tiring to scan. */
+.wx-tiles{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:9px;margin-top:14px;
+}
+@media (min-width:1150px){ .wx-tiles{grid-template-columns:repeat(8,minmax(0,1fr))} }
+.tile{background:rgba(6,12,22,.55);border:1px solid var(--border);border-radius:11px;padding:10px 11px;min-width:0}
 .tile .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:700}
 .tile .v{font-family:var(--mono);font-size:19px;font-weight:700;color:#fff;margin-top:5px}
 .tile .x{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.35}
@@ -374,7 +411,7 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .tile.hot .v{color:#ffb3b3}
 
 .wx-tabs{
-  display:flex;gap:0;margin:18px 0 0;border-bottom:1px solid var(--border);
+  display:flex;gap:0;margin:16px 0 0;border-bottom:1px solid var(--border);
   overflow-x:auto;scrollbar-width:none;
 }
 .wx-tabs::-webkit-scrollbar{display:none}
@@ -504,18 +541,21 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .nexttide .lbl{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim);font-weight:700}
 .nexttide .rest{font-size:12.5px;color:var(--muted);margin-left:auto}
 
-.tidetable{display:flex;flex-direction:column;gap:2px;margin-top:12px}
-.tiderow{
-  display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;
-  padding:7px 9px;border-radius:8px;font-size:13px;
+
+/* The next four tides, compact. The eight-row table this replaces was
+   taller than the chart it sat under and said the same thing twice. */
+.tidenext{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:11px}
+.tn{
+  background:rgba(6,12,22,.5);border:1px solid var(--border);
+  border-radius:9px;padding:8px 6px;text-align:center;min-width:0;
 }
-.tiderow:nth-child(odd){background:rgba(125,170,220,.05)}
-.tiderow.next{background:rgba(125,211,252,.11);box-shadow:inset 0 0 0 1px rgba(125,211,252,.3)}
-.tiderow .arrow{font-size:13px;width:15px;text-align:center}
-.tiderow .arrow.h{color:#7dd3fc} .tiderow .arrow.l{color:#fbbf24}
-.tiderow .day{color:var(--dim);font-size:11.5px}
-.tiderow .t{font-family:var(--mono);font-weight:650;color:var(--text)}
-.tiderow .v{font-family:var(--mono);color:var(--muted);font-size:12.5px;min-width:58px;text-align:right}
+.tn.next{background:rgba(125,211,252,.12);border-color:rgba(125,211,252,.42)}
+.tn .k{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:800}
+.tn .k.h{color:#7dd3fc} .tn .k.l{color:#fbbf24}
+.tn .t{font-family:var(--mono);font-size:13px;font-weight:650;color:#fff;margin-top:3px;white-space:nowrap}
+.tn .v{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:1px}
+.tn .d{font-size:9.5px;color:var(--dim);margin-top:2px}
+@media (max-width:430px){ .tidenext{grid-template-columns:repeat(2,1fr)} }
 
 .solunar{display:flex;flex-direction:column;gap:7px}
 .sol{
@@ -593,12 +633,17 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
         <div class="map-ctrl tr">
           <button id="zoomIn" title="Zoom in">+</button>
           <button id="zoomOut" title="Zoom out">−</button>
+          <button id="stationsBtn" class="layer on" title="Show or hide the NOAA tide gauges — click a circle on the map to switch to that gauge" aria-pressed="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s6.5-5.4 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15.6 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.4"/></svg>
+            <span class="lbl">TIDE GAUGES</span>
+          </button>
           <button id="recenter" title="Recentre on your location">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>
           </button>
         </div>
 
         <div class="map-hint" id="mapHint">Ctrl + scroll to zoom · drag to pan</div>
+        <div class="echonote" id="echoNote" hidden></div>
         <div class="map-attr">Basemap Esri · radar RainViewer</div>
       </div>
 
@@ -606,6 +651,7 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
         <button class="play" id="playBtn" title="Play / pause the radar loop">
           <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         </button>
+        <button class="nowbtn" id="nowBtn" title="Jump to the latest scan">NOW</button>
         <div class="track" id="track"><div class="nowline" id="nowline" style="display:none"></div></div>
         <div class="seg" id="speedSeg">
           <button data-speed="900">Slow</button>
@@ -648,15 +694,15 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
         <div class="card">
           <h2><span>Tide</span><span class="sub" id="tideAge">loading…</span></h2>
           <div class="chartwrap" id="tideChart"><div class="chart-empty">Loading tide predictions…</div></div>
-          <div class="tidetable" id="tideTable"></div>
+          <div class="tidenext" id="tideNext"></div>
         </div>
 
-        <div class="card">
+        <div class="card" id="cardStation" hidden>
           <h2><span>On the water</span><span class="sub">station observations</span></h2>
           <div class="wx-tiles" id="fishTiles"></div>
         </div>
 
-        <div class="card">
+        <div class="card" id="cardSolunar" hidden>
           <h2><span>Solunar periods</span><span class="sub">moon overhead &amp; underfoot</span></h2>
           <div class="solunar" id="solunar"></div>
         </div>
@@ -742,6 +788,19 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
         <h4>Tide station</h4>
         <select id="stationSel"></select>
         <div class="hint">NOAA CO-OPS gauges. The smaller bay stations carry tide predictions but no water-temperature or wind sensor.</div>
+      </div>
+
+      <div class="section">
+        <h4>Fishing panel</h4>
+        <div class="inline">
+          <span class="lb">Station observations</span>
+          <button class="switch" id="swStation" role="switch" aria-checked="false"></button>
+        </div>
+        <div class="inline">
+          <span class="lb">Solunar periods</span>
+          <button class="switch" id="swSolunar" role="switch" aria-checked="false"></button>
+        </div>
+        <div class="hint">Water temperature, wind, barometer and the moon's overhead and underfoot times feed the bite score either way. These switches only decide whether you also see the detail.</div>
       </div>
 
       <div class="section">
@@ -847,6 +906,7 @@ const DEFAULTS = {
   place:'Tampa', lat:27.9506, lon:-82.4572, zoom:8.4,
   units:'imperial', rings:'mi',
   scheme:'4', nowcast:true, autoplay:true, smooth:true, opacity:85, speed:500,
+  showStation:false, showSolunar:false, showStations:true,
   station:'8726520'
 };
 const SKEY = 'stormranger.settings.v2';
@@ -1137,6 +1197,95 @@ function drawMap(){
   drawLayer(z, labelUrl, 1);                                       // 3. town names, on top
 }
 
+/* ================================================================
+   TIDE STATION ZONES
+
+   A gauge is a point, not an area, so the disc is an honest stand-in
+   rather than a survey boundary: it marks the gauge and about six miles
+   of water around it, which is roughly how far one of these stations
+   stays a fair answer on connected water. Fill stays faint so the
+   basemap and any rain read straight through it; the outline carries
+   the shape. Click one to switch the tide panel to that gauge.
+   ================================================================ */
+const STATION_ZONE_MI = 6;
+let stationHits = [];
+
+function hexA(hex, a){
+  const n = parseInt(hex.slice(1), 16);
+  return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+
+function drawStations(ctx, z, scale, cx, cy, mPerPx){
+  stationHits = [];
+  if (!S.showStations) return;
+  const W = fxCv.width, H = fxCv.height;
+  const r = clamp(STATION_ZONE_MI * 1609.344 / mPerPx, 9 * MDPR, 130 * MDPR);
+
+  // the chosen gauge is drawn last so it sits on top of its neighbours
+  const order = TIDE_STATIONS.slice().sort(
+    (a, b) => (a.id === S.station ? 1 : 0) - (b.id === S.station ? 1 : 0));
+
+  const drawn = [];
+  for (const st of order){
+    const x = (lon2px(st.lon, z) - cx) * scale + W/2;
+    const y = (lat2px(st.lat, z) - cy) * scale + H/2;
+    const pad = r + 70 * MDPR;
+    if (x < -pad || x > W + pad || y < -pad || y > H + pad) continue;
+
+    const sel = st.id === S.station;
+    stationHits.push({ id: st.id, x, y, r });
+    drawn.push({ st, x, y, sel });
+
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = hexA(st.colour, sel ? 0.26 : 0.11);
+    ctx.fill();
+    ctx.lineWidth = (sel ? 2.6 : 1.5) * MDPR;
+    ctx.strokeStyle = hexA(st.colour, sel ? 1 : 0.78);
+    ctx.stroke();
+
+    ctx.beginPath(); ctx.arc(x, y, (sel ? 4 : 2.6) * MDPR, 0, Math.PI * 2);
+    ctx.fillStyle = st.colour; ctx.fill();
+    ctx.restore();
+  }
+
+  /* Labels go in a second pass so a chip can never be buried under the
+     next station's disc. These gauges sit close together, so each one is
+     tried below its circle then above, and any that still collides with a
+     chip already placed is dropped rather than printed on top of it. The
+     selected gauge goes first and always gets its name. */
+  const placed = [];
+  const hit = (a, b) => !(a.x + a.w < b.x || b.x + b.w < a.x || a.y + a.h < b.y || b.y + b.h < a.y);
+
+  for (const d of drawn.slice().sort((a, b) => (b.sel ? 1 : 0) - (a.sel ? 1 : 0))){
+    if (!d.sel && r <= 15 * MDPR) continue;              // too small to label without clutter
+    ctx.save();
+    ctx.font = (d.sel ? '700 ' : '600 ') + (11 * MDPR) + 'px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const tw = ctx.measureText(d.st.name).width;
+    const bw = tw + 10 * MDPR, bh = 17 * MDPR;
+
+    let box = null;
+    for (const dy of [r + 12 * MDPR, -(r + 12 * MDPR)]){
+      const cand = { x: d.x - bw/2, y: d.y + dy - bh/2, w: bw, h: bh };
+      if (!placed.some(q => hit(q, cand))){ box = cand; break; }
+    }
+    if (!box){ ctx.restore(); continue; }
+    placed.push(box);
+
+    ctx.fillStyle = 'rgba(4,9,17,.82)';
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(box.x, box.y, bw, bh, 4 * MDPR);
+    else ctx.rect(box.x, box.y, bw, bh);
+    ctx.fill();
+    ctx.strokeStyle = hexA(d.st.colour, d.sel ? 0.85 : 0.45);
+    ctx.lineWidth = 1 * MDPR; ctx.stroke();
+    ctx.fillStyle = d.sel ? '#ffffff' : d.st.colour;
+    ctx.fillText(d.st.name, d.x, box.y + bh/2);
+    ctx.restore();
+  }
+}
+
 function drawOverlay(){
   const z = tileZ();
   const scale = Math.pow(2, view.zoom - z) * MDPR;
@@ -1168,6 +1317,8 @@ function drawOverlay(){
     }
     mctx.restore();
   }
+
+  drawStations(mctx, z, scale, cx, cy, mPerPx);
 
   // you
   mctx.save();
@@ -1203,6 +1354,10 @@ function showMapHint(){
 mapwrap.addEventListener('pointerleave', () => { mapEngaged = false; });
 
 mapwrap.addEventListener('pointerdown', e => {
+  // Buttons layered over the map handle their own clicks. Without this the
+  // map starts a drag and captures the pointer, so the browser retargets the
+  // pointerup to the map and never fires a click on the button at all.
+  if (e.target.closest('.map-ctrl')) return;
   dragging = true; movedPx = 0; mapEngaged = true;
   lastPt = { x:e.clientX, y:e.clientY };
   mapwrap.classList.add('dragging');
@@ -1225,7 +1380,27 @@ function endDrag(e){
   dragging = false;
   mapwrap.classList.remove('dragging');
   try { mapwrap.releasePointerCapture(e.pointerId); } catch(err){}
+  if (movedPx < 6) pickStation(e);          // a tap, not a drag
   queuePreload();
+}
+
+/* Smallest zone under the pointer wins, so an overlapped gauge is still
+   reachable instead of being swallowed by a bigger neighbour. */
+function pickStation(e){
+  if (!S.showStations || !stationHits.length) return;
+  const b = mapwrap.getBoundingClientRect();
+  const x = (e.clientX - b.left) * MDPR, y = (e.clientY - b.top) * MDPR;
+  let best = null;
+  for (const h of stationHits){
+    if (Math.hypot(x - h.x, y - h.y) > h.r) continue;
+    if (!best || h.r < best.r) best = h;
+  }
+  if (!best || best.id === S.station) return;
+  S.station = best.id;
+  saveSettings();
+  $('stationSel').value = best.id;
+  loadTide();
+  drawOverlay();
 }
 mapwrap.addEventListener('pointerup', endDrag);
 mapwrap.addEventListener('pointercancel', endDrag);
@@ -1259,6 +1434,20 @@ function zoomAt(nz, px, py){
 
 $('zoomIn').onclick   = () => zoomAt(Math.round(view.zoom * 2) / 2 + 0.5, VW/2, VH/2);
 $('zoomOut').onclick  = () => zoomAt(Math.round(view.zoom * 2) / 2 - 0.5, VW/2, VH/2);
+/* The gauge layer is a map control, not a preference buried in a panel:
+   it belongs next to zoom, where you are already looking. */
+function paintStationsBtn(){
+  const b = $('stationsBtn');
+  b.classList.toggle('on', !!S.showStations);
+  b.setAttribute('aria-pressed', String(!!S.showStations));
+}
+$('stationsBtn').onclick = () => {
+  S.showStations = !S.showStations;
+  saveSettings();
+  paintStationsBtn();
+  drawOverlay();
+};
+
 $('recenter').onclick = () => {
   view.lat = S.lat; view.lon = S.lon; view.zoom = S.zoom;
   requestDraw(); queuePreload();
@@ -1287,6 +1476,7 @@ function preloadFrames(){
     seen.add(src.path);
     for (const t of list) getTile(radarUrl(src, z, t.wx, t.ty));
   }
+  queueEchoCheck();                           // the view moved, so re-ask what is in it
 }
 
 /* ================================================================
@@ -1469,6 +1659,132 @@ function describeMotion(){
 }
 
 /* ================================================================
+   ECHO CHECK  —  is there actually anything to look at?
+
+   An empty radar and a broken radar look identical on screen, which is
+   the one thing a storm app must never leave ambiguous. After every
+   refresh, and whenever the view settles, the visible part of the latest
+   scan is sampled for precipitation. If there is none, the map says so
+   out loud and points at the nearest rain instead of sitting there
+   looking dead.
+   ================================================================ */
+let echoTimer = 0;
+function queueEchoCheck(){
+  clearTimeout(echoTimer);
+  echoTimer = setTimeout(checkEcho, 700);
+}
+
+/* Composite the visible radar tiles into a small canvas and count how
+   much of it is not transparent. Alpha alone carries the echo. */
+async function viewHasEcho(frame){
+  const z = radarZ();
+  const scale = Math.pow(2, view.zoom - z) * MDPR;
+  const cx = lon2px(view.lon, z), cy = lat2px(view.lat, z);
+  const list = visibleTiles(z, scale, cx, cy);
+  const W = mapCv.width, H = mapCv.height, G = 128;
+  const kx = G / W, ky = G / H;
+
+  const c = document.createElement('canvas');
+  c.width = c.height = G;
+  const ctx = c.getContext('2d', { willReadFrequently:true });
+
+  const parts = await Promise.all(list.map(t =>
+    loadCors(radarUrl(frame, z, t.wx, t.ty)).then(im => ({ im, t }))));
+
+  let any = false;
+  for (const { im, t } of parts){
+    if (!im) continue;
+    any = true;
+    ctx.drawImage(im,
+      ((t.tx * TS - cx) * scale + W/2) * kx,
+      ((t.ty * TS - cy) * scale + H/2) * ky,
+      TS * scale * kx, TS * scale * ky);
+  }
+  if (!any) return null;
+
+  const d = ctx.getImageData(0, 0, G, G).data;
+  let hit = 0;
+  for (let i = 3; i < d.length; i += 4) if (d[i] > 24) hit++;
+  return hit / (G * G);
+}
+
+/* Widen out to roughly 800 km and find the closest echo to the centre,
+   so "nothing here" can be followed by "but there is rain over there". */
+async function nearestEcho(frame){
+  const z = 6, B = 3, G = 256, cell = G / B;
+  const n = Math.pow(2, z), half = (B - 1) / 2;
+  const cxT = Math.floor(lon2px(view.lon, z) / TS);
+  const cyT = Math.floor(lat2px(view.lat, z) / TS);
+
+  const c = document.createElement('canvas');
+  c.width = c.height = G;
+  const ctx = c.getContext('2d', { willReadFrequently:true });
+
+  const jobs = [];
+  for (let j = 0; j < B; j++){
+    for (let i = 0; i < B; i++){
+      const tx = ((cxT - half + i) % n + n) % n, ty = cyT - half + j;
+      if (ty < 0 || ty >= n) continue;
+      jobs.push(loadCors(radarUrl(frame, z, tx, ty)).then(im => ({ im, i, j })));
+    }
+  }
+  const parts = await Promise.all(jobs);
+  let any = false;
+  for (const p of parts){
+    if (!p.im) continue;
+    any = true;
+    ctx.drawImage(p.im, p.i * cell, p.j * cell, cell, cell);
+  }
+  if (!any) return null;
+
+  const worldPerPx = (B * TS) / G;
+  const vx = (lon2px(view.lon, z) - (cxT - half) * TS) / worldPerPx;
+  const vy = (lat2px(view.lat, z) - (cyT - half) * TS) / worldPerPx;
+
+  const d = ctx.getImageData(0, 0, G, G).data;
+  let best = Infinity, bx = 0, by = 0;
+  for (let y = 0; y < G; y++){
+    for (let x = 0; x < G; x++){
+      if (d[(y * G + x) * 4 + 3] <= 24) continue;
+      const dd = (x - vx) * (x - vx) + (y - vy) * (y - vy);
+      if (dd < best){ best = dd; bx = x; by = y; }
+    }
+  }
+  if (!isFinite(best)) return null;
+
+  const dxw = (bx - vx) * worldPerPx, dyw = (by - vy) * worldPerPx;
+  return {
+    metres: Math.hypot(dxw, dyw) * metresPerWorldPx(z),
+    bearing: (Math.atan2(dxw, -dyw) * 180 / Math.PI + 360) % 360
+  };
+}
+
+async function checkEcho(){
+  const note = $('echoNote');
+  try{
+    if (!radar.host || !radar.past.length){ note.hidden = true; return; }
+    const frame = radar.past[radar.past.length - 1];
+
+    const frac = await viewHasEcho(frame);
+    if (frac == null){ note.hidden = true; return; }       // tiles unreadable: say nothing
+    if (frac > 0.0015){ note.hidden = true; return; }       // there is rain on screen
+
+    const near = await nearestEcho(frame);
+    let tail = 'Nothing within a few hundred miles.';
+    if (near){
+      const far = isMetric()
+        ? Math.round(near.metres / 1000) + ' km'
+        : Math.round(near.metres / 1609.344) + ' mi';
+      tail = 'Nearest rain <b>' + far + ' ' + compassPt(near.bearing) + '</b> — pan or zoom out to see it.';
+    }
+    note.innerHTML = '<span class="dry">No rain in view.</span> ' + tail;
+    note.hidden = false;
+  }catch(err){
+    note.hidden = true;                                     // never let this break the map
+  }
+}
+
+/* ================================================================
    RADAR FRAMES  (RainViewer: 2 h of past scans + the forecast above)
    ================================================================ */
 const radar = { host:'', past:[], future:[], frames:[], idx:0, playing:false, timer:0, generated:0 };
@@ -1489,6 +1805,7 @@ async function loadRadar(){
     rebuildFrames(true);
     $('radarAge').textContent = 'updated ' + timeShort(new Date(radar.past[radar.past.length-1].time));
     estimateMotion();
+    queueEchoCheck();
   }catch(err){
     $('radarAge').textContent = 'radar offline';
     $('frameTime').textContent = 'Radar unavailable';
@@ -1543,6 +1860,7 @@ function paintFrame(){
   const f = currentFrame();
   const ticks = $('track').querySelectorAll('.tick');
   ticks.forEach(t => t.classList.toggle('on', +t.dataset.i === radar.idx));
+  $('nowBtn').classList.toggle('live', radar.idx === nowIndex());
   if (!f) return;
 
   $('frameTime').textContent = timeShort(new Date(f.time));
@@ -1586,6 +1904,15 @@ function pause(){
   $('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
 }
 $('playBtn').onclick = () => radar.playing ? pause() : play();
+
+/* Jump straight to the latest scan. The loop spends most of its length in
+   the past, so without this you often glance over and catch a frame from
+   an hour ago. */
+$('nowBtn').onclick = () => {
+  pause();
+  radar.idx = nowIndex();
+  paintFrame();
+};
 
 /* scrub the timeline by click or drag */
 function scrubTo(clientX){
@@ -1772,7 +2099,9 @@ function renderChart(){
 
   const h = wx.hourly;
   const W = Math.max(300, Math.round(wrap.clientWidth || 720));
-  const H = 196, padL = 14, padR = 14, padT = 38, padB = 28;
+  // keep a readable aspect: a 196px-tall line stretched over 1300px reads flat
+  const H = clamp(Math.round(W * 0.21), 180, 260);
+  const padL = 14, padR = 14, padT = 38, padB = 28;
   const iw = W - padL - padR, ih = H - padT - padB;
   const n = idx.length;
   const xAt = i => padL + (n === 1 ? iw/2 : i * iw / (n - 1));
@@ -1881,6 +2210,7 @@ function setUnits(u){
   describeMotion();
   if (tide.at) renderFishing();
   renderRadarStrip();
+  queueEchoCheck();
   requestDraw();
 }
 
@@ -1984,10 +2314,11 @@ function setPlace(name, lat, lon, zoom){
   view.lat = lat; view.lon = lon; view.zoom = S.zoom;
   requestDraw(); queuePreload();
   loadWeather(); loadAlerts();
+  queueEchoCheck();
   if (tide.at) renderFishing();          // solunar times are latitude-dependent
 }
 
-$('stationSel').onchange = e => { S.station = e.target.value; saveSettings(); loadTide(); };
+$('stationSel').onchange = e => { S.station = e.target.value; saveSettings(); loadTide(); drawOverlay(); };
 $('unitSeg').onclick = e => { const b = e.target.closest('button'); if (b) setUnits(b.dataset.units); };
 $('ringSeg').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -2011,6 +2342,12 @@ function wireSwitch(id, key, after){
     if (after) after();
   };
 }
+function applyPanelPrefs(){
+  $('cardStation').hidden = !S.showStation;
+  $('cardSolunar').hidden = !S.showSolunar;
+}
+wireSwitch('swStation', 'showStation', applyPanelPrefs);
+wireSwitch('swSolunar', 'showSolunar', applyPanelPrefs);
 wireSwitch('swNowcast',  'nowcast',  () => rebuildFrames(true));
 wireSwitch('swAutoplay', 'autoplay', () => { if (S.autoplay) play(); else pause(); });
 wireSwitch('swSmooth',   'smooth',   () => { requestDraw(); preloadFrames(); });
@@ -2044,11 +2381,13 @@ function applySettings(){
   $('schemeSel').value = S.scheme;
   $('radarOpacity').value = S.opacity;
   $('radarOpacityVal').textContent = S.opacity;
-  [['swNowcast','nowcast'],['swAutoplay','autoplay'],['swSmooth','smooth']].forEach(([id,k]) => {
+  [['swNowcast','nowcast'],['swAutoplay','autoplay'],['swSmooth','smooth'],
+   ['swStation','showStation'],['swSolunar','showSolunar']].forEach(([id,k]) => {
     $(id).classList.toggle('on', !!S[k]);
     $(id).setAttribute('aria-checked', String(!!S[k]));
   });
-
+  applyPanelPrefs();
+  paintStationsBtn();
 }
 
 /* ================================================================
@@ -2223,15 +2562,17 @@ function solunarWindows(){
    Every product is requested separately and allowed to fail on its
    own; the smaller bay stations carry tide predictions but no sensors.
    ================================================================ */
+/* Coordinates are the gauges' own, from the CO-OPS station metadata.
+   The colours only have to be told apart on a dark grey basemap. */
 const TIDE_STATIONS = [
-  { id:'8726520', name:'St. Petersburg' },
-  { id:'8726724', name:'Clearwater Beach' },
-  { id:'8726607', name:'Old Port Tampa' },
-  { id:'8726384', name:'Port Manatee' },
-  { id:'8726347', name:'Egmont Key' },
-  { id:'8726667', name:'McKay Bay Entrance' },
-  { id:'8725520', name:'Fort Myers' },
-  { id:'8727520', name:'Cedar Key' }
+  { id:'8726520', name:'St. Petersburg',     lat:27.7606, lon:-82.6269, colour:'#7dd3fc' },
+  { id:'8726724', name:'Clearwater Beach',   lat:27.9783, lon:-82.8317, colour:'#4ade80' },
+  { id:'8726607', name:'Old Port Tampa',     lat:27.8578, lon:-82.5528, colour:'#fbbf24' },
+  { id:'8726384', name:'Port Manatee',       lat:27.6387, lon:-82.5621, colour:'#f472b6' },
+  { id:'8726347', name:'Egmont Key',         lat:27.6017, lon:-82.7600, colour:'#a78bfa' },
+  { id:'8726667', name:'McKay Bay Entrance', lat:27.9133, lon:-82.4250, colour:'#fb923c' },
+  { id:'8725520', name:'Fort Myers',         lat:26.6478, lon:-81.8711, colour:'#2dd4bf' },
+  { id:'8727520', name:'Cedar Key',          lat:29.1350, lon:-83.0317, colour:'#e879f9' }
 ];
 const COOPS = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter' +
               '?application=StormRanger&format=json&time_zone=lst_ldt&units=english&station=';
@@ -2400,7 +2741,7 @@ function renderFishing(){
     $('biteScore').innerHTML = scoreRing(0, '#8296b3');
     $('nextTide').innerHTML = '';
     $('tideChart').innerHTML = '<div class="chart-empty">No tide predictions.</div>';
-    $('tideTable').innerHTML = ''; $('fishTiles').innerHTML = ''; $('solunar').innerHTML = '';
+    $('tideNext').innerHTML = ''; $('fishTiles').innerHTML = ''; $('solunar').innerHTML = '';
     return;
   }
 
@@ -2414,7 +2755,7 @@ function renderFishing(){
 
   renderNextTide();
   renderTideChart();
-  renderTideTable();
+  renderTideNext();
   renderFishTiles();
   renderSolunar();
 }
@@ -2452,7 +2793,7 @@ function renderTideChart(){
   if (pts.length < 2){ wrap.innerHTML = '<div class="chart-empty">Tide curve out of range.</div>'; return; }
 
   const W = Math.max(280, Math.round(wrap.clientWidth || 460));
-  const H = 186, padL = 12, padR = 12, padT = 34, padB = 26;
+  const H = 152, padL = 12, padR = 12, padT = 30, padB = 24;
   const iw = W - padL - padR, ih = H - padT - padB;
 
   const vals = pts.map(p => p.v);
@@ -2512,19 +2853,17 @@ function renderTideChart(){
   wrap.innerHTML = svg;
 }
 
-function renderTideTable(){
-  const now = Date.now();
-  const nxt = nextTide();
-  const rows = tide.hilo.filter(h => h.t.getTime() > now - 3600000).slice(0, 8);
-  $('tideTable').innerHTML = rows.map(h => {
-    const isNext = nxt && h.t.getTime() === nxt.t.getTime();
-    const dayLbl = h.t.toDateString() === new Date().toDateString()
-      ? 'Today' : h.t.toLocaleDateString([], { weekday:'short' });
-    return '<div class="tiderow' + (isNext ? ' next' : '') + '">' +
-      '<span class="arrow ' + (h.type === 'H' ? 'h">▲' : 'l">▼') + '</span>' +
-      '<span class="day">' + dayLbl + ' · ' + (h.type === 'H' ? 'High' : 'Low') + '</span>' +
-      '<span class="t">' + timeShort(h.t) + '</span>' +
-      '<span class="v">' + h.v.toFixed(2) + ' ft</span>' +
+function renderTideNext(){
+  const now = Date.now(), today = new Date().toDateString();
+  const rows = tide.hilo.filter(h => h.t.getTime() > now).slice(0, 4);
+  $('tideNext').innerHTML = rows.map((h, i) => {
+    const hi = h.type === 'H';
+    const day = h.t.toDateString() === today ? 'Today' : h.t.toLocaleDateString([], { weekday:'short' });
+    return '<div class="tn' + (i === 0 ? ' next' : '') + '">' +
+      '<div class="k ' + (hi ? 'h">▲ High' : 'l">▼ Low') + '</div>' +
+      '<div class="t">' + timeShort(h.t) + '</div>' +
+      '<div class="v">' + h.v.toFixed(2) + ' ft</div>' +
+      '<div class="d">' + day + '</div>' +
     '</div>';
   }).join('');
 }
@@ -2626,7 +2965,7 @@ function renderRadarStrip(){
 /* the countdown and the live/next markers drift, so retick them */
 setInterval(() => {
   if (!tide.at || document.visibilityState !== 'visible') return;
-  renderNextTide(); renderSolunar(); renderTideTable();
+  renderNextTide(); renderSolunar(); renderTideNext();
 }, 30000);
 
 
