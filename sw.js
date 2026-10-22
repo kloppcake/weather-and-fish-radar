@@ -21,7 +21,7 @@
    without a filename change.
    ================================================================ */
 
-const CACHE = 'storm-ranger-v2';
+const CACHE = 'storm-ranger-v3';
 
 // The static files that make up the app shell.
 const SHELL = [
@@ -62,9 +62,16 @@ self.addEventListener('fetch', (event) => {
   if (!sameOrigin) return;
 
   // The page: network first, cache only as the offline fallback.
+  //
+  // This asks for the URL with cache:'no-cache' rather than reusing the
+  // original request. A plain fetch() still reads the browser's own HTTP
+  // cache, and GitHub Pages serves HTML with a max-age, so "network
+  // first" would quietly hand back the same stale page for the length of
+  // that window. 'no-cache' forces a revalidation against the server, so
+  // a 304 is still cheap but a new deploy is picked up at once.
   if (req.mode === 'navigate' || (req.destination === 'document')) {
     event.respondWith(
-      fetch(req)
+      fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' })
         .then((res) => {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put('./index.html', copy)).catch(() => {});
