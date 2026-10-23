@@ -357,6 +357,97 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .legend .lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:700}
 
 /* ============================================================
+   LOCATION SWITCHER
+   ============================================================ */
+.locbtn{
+  display:inline-flex;align-items:center;gap:7px;padding:4px 10px;margin:-4px 0;
+  background:rgba(125,170,220,.08);border:1px solid var(--border);border-radius:9px;
+  color:var(--text);font:inherit;font-size:11px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;cursor:pointer;min-width:0;
+}
+.locbtn:hover:not(:disabled){background:rgba(125,211,252,.16);border-color:var(--accent)}
+.locbtn svg{width:11px;height:11px;flex:0 0 auto;opacity:.75}
+
+.locwrap{position:relative}
+.locpanel{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:40;width:min(360px,calc(100vw - 48px));
+  background:#0b1421;border:1px solid var(--border-hi);border-radius:14px;
+  box-shadow:0 24px 60px rgba(0,0,0,.65);padding:14px;
+}
+.locpanel h4{
+  margin:14px 0 8px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);font-weight:700;
+}
+.locpanel h4:first-child{margin-top:0}
+.lochd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.lochd b{font-size:13.5px}
+.lochd button{flex:0 0 auto;min-width:0;width:28px;height:28px;padding:0;border-radius:8px;font-size:15px;line-height:1}
+.locrow{
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;
+  padding:9px 11px;margin-bottom:5px;border-radius:9px;text-align:left;
+  background:rgba(6,12,22,.55);border:1px solid var(--border);min-width:0;
+}
+.locrow:hover:not(:disabled){background:rgba(125,211,252,.12);border-color:rgba(125,211,252,.45)}
+.locrow.on{background:rgba(125,211,252,.16);border-color:rgba(125,211,252,.55)}
+.locrow .n{font-size:13px;font-weight:650;color:var(--text)}
+.locrow .t{font-size:11px;color:var(--dim);text-transform:none;letter-spacing:0;font-weight:500}
+.locnote{font-size:12px;color:var(--dim);padding:8px 2px;line-height:1.5}
+
+/* ============================================================
+   WATER TYPE + RIVER
+   ============================================================ */
+.watertype{display:flex;justify-content:center}
+.watertype .seg{width:100%;justify-content:center}
+.watertype .seg button{flex:1 1 0}
+
+.site{margin-bottom:14px}
+.site:last-child{margin-bottom:0}
+.sitehd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:7px}
+.sitehd .lbl{font-size:13px;font-weight:650;color:var(--text)}
+.sitehd .role{
+  font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;
+  color:var(--dim);background:rgba(125,170,220,.12);border-radius:99px;padding:3px 8px;
+}
+.rows{display:flex;flex-direction:column;gap:3px}
+.row{
+  display:grid;grid-template-columns:1fr auto auto;gap:9px;align-items:baseline;
+  padding:7px 9px;border-radius:8px;background:rgba(6,12,22,.5);font-size:13px;
+}
+.row .k{color:var(--muted)}
+.row .v{font-family:var(--mono);font-weight:650;color:#fff}
+.row .tr{font-size:11px;font-family:var(--mono);color:var(--dim);white-space:nowrap}
+.row .tr.rising{color:#fb923c} .row .tr.falling{color:#7dd3fc} .row .tr.steady{color:#4ade80}
+.row .upstream{
+  grid-column:1/-1;font-size:11px;color:var(--thunder);font-weight:650;margin-top:2px;
+}
+.sparkwrap{display:flex;align-items:center;gap:8px;padding:4px 9px 2px}
+.spark{flex:1 1 auto;height:34px;width:100%}
+.sparklbl{font-size:9.5px;color:var(--dim);letter-spacing:.1em}
+.rivernote{font-size:12px;color:var(--muted);line-height:1.55;padding:6px 2px}
+.rivernote.brack{
+  color:#cfe3f5;background:rgba(125,211,252,.1);border:1px solid rgba(125,211,252,.3);
+  border-radius:10px;padding:10px 12px;margin-bottom:12px;
+}
+.riverbad{
+  font-size:12.5px;color:#ffd9d9;background:rgba(248,113,113,.12);
+  border:1px solid rgba(248,113,113,.36);border-radius:10px;padding:10px 12px;
+}
+.srcfoot{font-size:10.5px;color:var(--dim);margin-top:12px;line-height:1.7}
+.srcfoot a{color:var(--accent);text-decoration:none}
+.srcfoot a:hover{text-decoration:underline}
+.reasons .dropped{color:var(--dim);font-style:italic}
+.reasons i{color:var(--dim);font-style:normal;font-size:11px}
+
+/* stale radar */
+.stalebadge{
+  display:none;align-items:center;gap:7px;margin-top:10px;padding:9px 12px;border-radius:10px;
+  font-size:12px;line-height:1.45;font-weight:600;
+  background:rgba(248,113,113,.13);border:1px solid rgba(248,113,113,.45);color:#ffd9d9;
+}
+.stalebadge.show{display:flex}
+.stalebadge b{color:#fff}
+
+/* ============================================================
    STATION STRIP  (under the radar)
    ============================================================ */
 .radarstrip{
@@ -866,7 +957,21 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
     <!-- ============ LEFT: LIVE RADAR ============ -->
     <div class="card" id="radarCard">
       <h2>
-        <span>Live radar · <span id="radarPlace">Tampa Bay</span></span>
+        <span class="locwrap">
+          <button class="locbtn" id="locBtn" aria-haspopup="true" aria-expanded="false"
+                  title="Change location">
+            <span>Live radar · <span id="locName">Tampa Bay</span></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="locpanel" id="locPanel" hidden>
+            <div class="lochd"><b>Where are you fishing?</b><button id="locClose" title="Close">✕</button></div>
+            <input type="text" id="locSearch" placeholder="Search a town in FL, GA, SC or NC"
+                   autocomplete="off" spellcheck="false">
+            <div id="locResults"></div>
+            <h4>Saved spots</h4>
+            <div id="locSaved"></div>
+          </div>
+        </span>
         <span class="sub" id="radarAge">loading…</span>
       </h2>
 
@@ -918,6 +1023,8 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
         <span class="lbl" id="motionNote" style="margin-left:auto;color:var(--thunder)">▮ amber = forecast</span>
       </div>
 
+      <div class="stalebadge" id="staleBadge"></div>
+
       <div class="radarstrip">
         <div class="rs"><div class="l">Water temp</div><div class="v" id="rsWater">—</div><div class="x" id="rsWaterSub">reading the gauge…</div></div>
         <div class="rs"><div class="l">Wind</div><div class="v" id="rsWind">—</div><div class="x" id="rsWindSub">reading the gauge…</div></div>
@@ -929,6 +1036,14 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
     <div class="stack">
 
 
+        <div class="watertype">
+          <div class="seg" id="waterSeg">
+            <button data-wt="salt">Salt</button>
+            <button data-wt="brackish">Brackish</button>
+            <button data-wt="fresh">Fresh</button>
+          </div>
+        </div>
+
         <div class="card">
           <h2><span>Bite window</span><span class="sub" id="biteStation">St. Petersburg · 8726520</span></h2>
           <div class="bite">
@@ -939,10 +1054,16 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
             </div>
           </div>
           <div class="nexttide" id="nextTide"></div>
-          <div class="fishnote">A rule-of-thumb blend of tide flow, solunar timing, moon phase, wind and barometer. Every part of it is listed above so you can disagree with it.</div>
+          <div class="fishnote" id="fishnote">A rule-of-thumb blend of tide flow, solunar timing, moon phase, wind and barometer. Every part of it is listed above so you can disagree with it.</div>
         </div>
 
-        <div class="card">
+        <div class="card" id="cardRiver" hidden>
+          <h2><span>River &amp; water</span><span class="sub" id="riverAge">loading…</span></h2>
+          <div id="riverBody"></div>
+          <div class="srcfoot" id="riverSources"></div>
+        </div>
+
+        <div class="card" id="cardTide">
           <h2><span>Tide</span><span class="sub" id="tideAge">loading…</span></h2>
           <div class="chartwrap" id="tideChart"><div class="chart-empty">Loading tide predictions…</div></div>
           <div class="tidenext" id="tideNext"></div>
@@ -1956,6 +2077,45 @@ function describeMotion(){
 }
 
 /* ================================================================
+   STALE GUARD
+
+   The refresh timers only tick while the page is visible, so a tab left
+   in the background came back showing frames hours old with nothing
+   saying so. The age of the newest scan is checked after every load and
+   on a slow timer, and the page refreshes everything the moment it
+   becomes visible again.
+   ================================================================ */
+const STALE_MIN = 30;
+
+function showStale(msg){
+  const el = $('staleBadge');
+  el.innerHTML = '<span>\u26A0</span><span>' + msg + '</span>';
+  el.classList.add('show');
+}
+function clearStale(){ $('staleBadge').classList.remove('show'); }
+
+function checkStale(){
+  if (!radar.past.length){ return; }
+  const age = (Date.now() - radar.past[radar.past.length - 1].time) / 60000;
+  if (age > STALE_MIN){
+    showStale('<b>Radar data is stale.</b> Newest scan is ' + Math.round(age) +
+              ' minutes old. Press Refresh, or check your connection.');
+  } else {
+    clearStale();
+  }
+}
+
+/* Coming back to a backgrounded tab: catch everything up at once. */
+let lastWake = Date.now();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  checkStale();
+  if (Date.now() - lastWake < 60000) return;      // a quick tab flick needs no reload
+  lastWake = Date.now();
+  refreshAll();
+});
+
+/* ================================================================
    ECHO CHECK  —  is there actually anything to look at?
 
    An empty radar and a broken radar look identical on screen, which is
@@ -2101,9 +2261,11 @@ async function loadRadar(){
     if (!radar.past.length) throw new Error('no radar frames returned');
     rebuildFrames(true);
     $('radarAge').textContent = 'updated ' + timeShort(new Date(radar.past[radar.past.length-1].time));
+    checkStale();
     estimateMotion();
     queueEchoCheck();
   }catch(err){
+    showStale('Radar feed unreachable. Showing whatever was last loaded.');
     $('radarAge').textContent = 'radar offline';
     $('frameTime').textContent = 'Radar unavailable';
     $('frameTag').textContent  = 'CHECK CONNECTION';
@@ -2250,7 +2412,7 @@ let wxTab = 'temp';
 const OM =
   'https://api.open-meteo.com/v1/forecast' +
   '?current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,wind_speed_10m,wind_gusts_10m,wind_direction_10m' +
-  '&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,is_day,wind_speed_700hPa,wind_direction_700hPa' +
+  '&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,is_day,surface_pressure,wind_speed_700hPa,wind_direction_700hPa' +
   '&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,precipitation_probability_max,precipitation_sum,uv_index_max,sunrise,sunset,wind_speed_10m_max' +
   '&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=8';
 
@@ -2263,6 +2425,7 @@ async function loadWeather(){
     wxDayIdx = 0;
     renderWeather();
     renderRadarStrip();              // the wind fallback comes from this payload
+    if (waterType() !== 'salt') renderFreshBite();
     if (!MOTION.ok){                 // radar correlation found nothing; try the steering wind now
       steeringWindFallback();
       if (MOTION.ok){ rebuildFrames(false); }
@@ -2303,7 +2466,7 @@ function renderWeather(){
   $('nowIcon').innerHTML = wxIcon(c.weather_code, day, 76);
   $('nowTemp').textContent = fmtTemp(c.temperature_2m);
   $('wxPlace').textContent = S.place;
-  $('radarPlace').textContent = S.place;
+  $('locName').textContent = S.place;
   $('wxDay').textContent = parseLocal(c.time).toLocaleDateString([], { weekday:'long' }) + ' · ' + timeShort(parseLocal(c.time));
   $('wxCond').textContent = wxText(c.weather_code);
 
@@ -2607,7 +2770,7 @@ function setPlace(name, lat, lon, zoom){
   $('latIn').value = lat.toFixed(4);
   $('lonIn').value = lon.toFixed(4);
   $('wxPlace').textContent = name;
-  $('radarPlace').textContent = name;
+  $('locName').textContent = name;
   view.lat = lat; view.lon = lon; view.zoom = S.zoom;
   requestDraw(); queuePreload();
   loadWeather(); loadAlerts();
@@ -2640,8 +2803,9 @@ function wireSwitch(id, key, after){
   };
 }
 function applyPanelPrefs(){
-  $('cardStation').hidden = !S.showStation;
-  $('cardSolunar').hidden = !S.showSolunar;
+  const salt = waterType() === 'salt';
+  $('cardStation').hidden = !(salt && S.showStation);
+  $('cardSolunar').hidden = !(salt && S.showSolunar);
 }
 wireSwitch('swStation', 'showStation', applyPanelPrefs);
 wireSwitch('swSolunar', 'showSolunar', applyPanelPrefs);
@@ -2667,7 +2831,7 @@ function applySettings(){
   $('latIn').value = S.lat.toFixed(4);
   $('lonIn').value = S.lon.toFixed(4);
   $('wxPlace').textContent = S.place;
-  $('radarPlace').textContent = S.place;
+  $('locName').textContent = S.place;
 
   $('unitF').classList.toggle('on', !isMetric());
   $('unitC').classList.toggle('on', isMetric());
@@ -2690,13 +2854,14 @@ function applySettings(){
 /* ================================================================
    REFRESH + RESIZE
    ================================================================ */
-function refreshAll(){ loadRadar(); loadWeather(); loadAlerts(); loadTide(); }
+function refreshAll(){ loadRadar(); loadWeather(); loadAlerts(); refreshWaterPanel(); }
 $('refreshBtn').onclick = refreshAll;
 
 setInterval(() => { if (document.visibilityState === 'visible') loadRadar();   }, 4 * 60 * 1000);
+setInterval(checkStale, 60 * 1000);          // say so even if a refresh is failing
 setInterval(() => { if (document.visibilityState === 'visible') loadWeather(); }, 10 * 60 * 1000);
 setInterval(() => { if (document.visibilityState === 'visible') loadAlerts();  }, 5 * 60 * 1000);
-setInterval(() => { if (document.visibilityState === 'visible') loadTide();    }, 10 * 60 * 1000);
+setInterval(() => { if (document.visibilityState === 'visible') refreshWaterPanel(); }, 10 * 60 * 1000);
 
 let resizeTimer = 0, chartTimer = 0;
 function onResize(){
@@ -3228,25 +3393,43 @@ const compassPt = deg => COMPASS[Math.round(((deg % 360) + 360) % 360 / 22.5) % 
 const ktAlso = kt => isMetric() ? Math.round(kt * 1.852) + ' km/h' : Math.round(kt * 1.15078) + ' mph';
 
 function renderRadarStrip(){
-  const st = TIDE_STATIONS.find(x => x.id === S.station);
-  const stName = st ? st.name : 'the station';
+  // Only name the CO-OPS gauge when this location actually has one;
+  // otherwise fall back to a USGS water-temperature sensor, then to
+  // saying plainly that there is no sensor here.
+  const hasCoops = !!LOC.noaaTideStation;
+  const st = hasCoops ? TIDE_STATIONS.find(x => x.id === LOC.noaaTideStation) : null;
+  const stName = st ? st.name : (LOC.short || LOC.name);
 
-  if (tide.wtemp != null){
-    $('rsWater').textContent = fmtTemp(tide.wtemp);
-    $('rsWaterSub').textContent = stName + ' gauge';
-  } else {
-    $('rsWater').textContent = '—';
-    $('rsWaterSub').textContent = 'no sensor at ' + stName;
+  let usgsTemp = null, usgsFrom = '';
+  if (!hasCoops && typeof river === 'object'){
+    for (const site of (river.sites || [])){
+      if (site.params && site.params['00010']){
+        const ser = site.params['00010'];
+        usgsTemp = ser[ser.length - 1].v; usgsFrom = site.label; break;
+      }
+    }
   }
 
-  const gKt = tide.wind ? num(tide.wind.s) : null;
-  const gGk = tide.wind ? num(tide.wind.g) : null;
+  if (hasCoops && tide.wtemp != null){
+    $('rsWater').textContent = fmtTemp(tide.wtemp);
+    $('rsWaterSub').textContent = stName + ' gauge';
+  } else if (usgsTemp != null){
+    $('rsWater').textContent = fmtTemp(usgsTemp);
+    $('rsWaterSub').textContent = usgsFrom;
+  } else {
+    $('rsWater').textContent = '—';
+    $('rsWaterSub').textContent = hasCoops ? 'no sensor at ' + stName
+                                           : 'no water-temperature sensor here';
+  }
+
+  const gKt = (hasCoops && tide.wind) ? num(tide.wind.s) : null;
+  const gGk = (hasCoops && tide.wind) ? num(tide.wind.g) : null;
   const fKt = (wx && wx.current && wx.current.wind_speed_10m != null) ? wx.current.wind_speed_10m / 1.15078 : null;
   const fGk = (wx && wx.current && wx.current.wind_gusts_10m != null) ? wx.current.wind_gusts_10m / 1.15078 : null;
 
   const kt = gKt != null ? gKt : fKt;
   const gk = gGk != null ? gGk : fKt != null ? fGk : null;
-  const from = tide.wind ? tide.wind.dr
+  const from = (hasCoops && tide.wind) ? tide.wind.dr
              : (wx && wx.current && wx.current.wind_direction_10m != null ? compassPt(wx.current.wind_direction_10m) : '');
   const src = gKt != null ? stName + ' gauge' : 'forecast model';
 
@@ -4057,6 +4240,544 @@ addEventListener('keydown', e => {
 addEventListener('resize', () => { if (FG.open) fgSize(); });
 
 /* ================================================================
+   LOCATIONS
+
+   Add a saved spot by appending to LOCATIONS below. Everything else
+   keys off it: the radar centre, the forecast, which water panel is
+   shown and which stations it reads.
+
+     id               anything unique
+     name             what the header shows
+     lat, lon         centre of the radar and the forecast point
+     zoom             starting radar zoom
+     waterType        'salt' | 'brackish' | 'fresh'   (the default; the
+                      user can override it, stored per location)
+     noaaTideStation  CO-OPS id for tides, or null
+     usgsSites        [{ id, label, role:'local'|'upstream' }]
+     nwpsGauge        NWS river-forecast LID, or null
+   ================================================================ */
+const LOCATIONS = [
+  {
+    id: 'stpete',
+    name: 'St. Petersburg / Tampa Bay, FL',
+    short: 'Tampa Bay',
+    lat: 27.9506, lon: -82.4572, zoom: 8.4,
+    waterType: 'salt',
+    noaaTideStation: '8726520',
+    usgsSites: [],
+    nwpsGauge: null
+  },
+  {
+    id: 'washington-nc',
+    name: 'Washington, NC (Tar/Pamlico River)',
+    short: 'Washington, NC',
+    lat: 35.5425, lon: -77.0617, zoom: 9.3,
+    waterType: 'brackish',
+    noaaTideStation: null,          // 8653365 is historical only, do not use
+    usgsSites: [
+      // gage height only; its discharge series exists but returns nothing
+      { id: '02084472', label: 'Pamlico River at Washington', role: 'local' },
+      // nearest upstream Tar River gauge with live discharge. Greenville
+      // (02084000) is closer but every discharge value it returns is the
+      // -999999 no-data sentinel, so Tarboro is used instead.
+      { id: '02083500', label: 'Tar River at Tarboro', role: 'upstream' }
+    ],
+    nwpsGauge: null                 // no NWPS gauge resolved for this reach
+  }
+];
+
+const LOC_KEY = 'stormranger.location.v1';
+const WT_KEY  = 'stormranger.watertype.v1';
+
+function readJSON(key, fallback){
+  try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; }
+  catch (e){ return fallback; }
+}
+function writeJSON(key, value){
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e){ /* private mode */ }
+}
+
+let LOC = (() => {
+  const saved = readJSON(LOC_KEY, null);
+  if (saved && typeof saved.lat === 'number' && typeof saved.lon === 'number') return saved;
+  return LOCATIONS[0];
+})();
+
+/* A searched spot has no stations behind it, so it carries empty wiring. */
+function locFromGeo(r){
+  return {
+    id: 'geo:' + r.latitude.toFixed(4) + ',' + r.longitude.toFixed(4),
+    name: r.name + ', ' + (r.admin1 || '') + (r.admin2 ? ' (' + r.admin2 + ')' : ''),
+    short: r.name,
+    lat: r.latitude, lon: r.longitude, zoom: 9.0,
+    waterType: 'salt',              // unknowable from a geocode; user can override
+    noaaTideStation: null, usgsSites: [], nwpsGauge: null,
+    searched: true
+  };
+}
+
+/* water type: the location's default unless this spot has an override */
+function waterType(){
+  const over = readJSON(WT_KEY, {});
+  return over[LOC.id] || LOC.waterType || 'salt';
+}
+function setWaterType(wt){
+  const over = readJSON(WT_KEY, {});
+  over[LOC.id] = wt;
+  writeJSON(WT_KEY, over);
+  paintWaterSeg();
+  refreshWaterPanel();
+}
+function paintWaterSeg(){
+  const wt = waterType();
+  $('waterSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.wt === wt));
+}
+
+/* ---------- applying a location ---------- */
+function applyLocation(loc, opts){
+  LOC = loc;
+  writeJSON(LOC_KEY, loc);
+
+  // the rest of the app reads these
+  S.place = loc.short || loc.name;
+  S.lat = loc.lat; S.lon = loc.lon;
+  if (loc.noaaTideStation) S.station = loc.noaaTideStation;
+  saveSettings();
+
+  $('locName').textContent = loc.short || loc.name;
+  $('wxPlace').textContent = loc.short || loc.name;
+
+  view.lat = loc.lat; view.lon = loc.lon;
+  if (loc.zoom) { view.zoom = loc.zoom; S.zoom = loc.zoom; }
+  requestDraw(); queuePreload(); queueEchoCheck();
+
+  closeLocPanel();
+  paintWaterSeg();
+  loadWeather(); loadAlerts();
+  refreshWaterPanel();
+}
+
+/* ---------- the switcher panel ---------- */
+function openLocPanel(){
+  $('locPanel').hidden = false;
+  $('locBtn').setAttribute('aria-expanded', 'true');
+  renderSaved();
+  setTimeout(() => $('locSearch').focus(), 30);
+}
+function closeLocPanel(){
+  $('locPanel').hidden = true;
+  $('locBtn').setAttribute('aria-expanded', 'false');
+}
+function renderSaved(){
+  $('locSaved').innerHTML = LOCATIONS.map(l =>
+    '<button class="locrow' + (l.id === LOC.id ? ' on' : '') + '" data-saved="' + l.id + '">' +
+      '<span class="n">' + esc(l.name) + '</span>' +
+      '<span class="t">' + esc(l.waterType) + (l.noaaTideStation ? ' · tides' : '') +
+        (l.usgsSites.length ? ' · ' + l.usgsSites.length + ' river gauge' + (l.usgsSites.length > 1 ? 's' : '') : '') +
+      '</span>' +
+    '</button>').join('');
+}
+
+const GEO_STATES = new Set(['Florida', 'Georgia', 'South Carolina', 'North Carolina']);
+let geoTimer = 0, geoSeq = 0;
+
+function onLocSearch(){
+  const q = $('locSearch').value.trim();
+  clearTimeout(geoTimer);
+  if (q.length < 2){ $('locResults').innerHTML = ''; return; }
+  geoTimer = setTimeout(() => runGeoSearch(q), 300);
+}
+
+async function runGeoSearch(q){
+  const seq = ++geoSeq;
+  const box = $('locResults');
+  box.innerHTML = '<div class="locnote">Searching…</div>';
+  try{
+    const url = 'https://geocoding-api.open-meteo.com/v1/search?name=' +
+                encodeURIComponent(q) + '&count=25&language=en&format=json';
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (seq !== geoSeq) return;                     // a newer keystroke won
+    const hits = (j.results || [])
+      .filter(x => x.country_code === 'US' && GEO_STATES.has(x.admin1))
+      .slice(0, 8);
+    if (!hits.length){
+      box.innerHTML = '<div class="locnote">Nothing in FL, GA, SC or NC matching that.</div>';
+      return;
+    }
+    window.__geoHits = hits;
+    box.innerHTML = hits.map((h, i) =>
+      '<button class="locrow" data-geo="' + i + '">' +
+        '<span class="n">' + esc(h.name) + '</span>' +
+        '<span class="t">' + esc([h.admin2, h.admin1].filter(Boolean).join(', ')) +
+          ' · ' + h.latitude.toFixed(3) + ', ' + h.longitude.toFixed(3) + '</span>' +
+      '</button>').join('');
+  }catch(err){
+    if (seq !== geoSeq) return;
+    box.innerHTML = '<div class="locnote">Search is unavailable right now.</div>';
+  }
+}
+
+$('locBtn').onclick = () => { $('locPanel').hidden ? openLocPanel() : closeLocPanel(); };
+$('locClose').onclick = closeLocPanel;
+$('locSearch').oninput = onLocSearch;
+$('locSaved').onclick = e => {
+  const b = e.target.closest('[data-saved]'); if (!b) return;
+  const l = LOCATIONS.find(x => x.id === b.dataset.saved);
+  if (l) applyLocation(l);
+};
+$('locResults').onclick = e => {
+  const b = e.target.closest('[data-geo]'); if (!b) return;
+  const hit = (window.__geoHits || [])[+b.dataset.geo];
+  if (hit) applyLocation(locFromGeo(hit));
+};
+$('waterSeg').onclick = e => {
+  const b = e.target.closest('button'); if (b) setWaterType(b.dataset.wt);
+};
+document.addEventListener('click', e => {
+  if ($('locPanel').hidden) return;
+  if (e.target.closest('#locPanel') || e.target.closest('#locBtn')) return;
+  closeLocPanel();
+});
+addEventListener('keydown', e => { if (e.key === 'Escape') closeLocPanel(); });
+
+/* ================================================================
+   RIVER WATER  —  USGS Instantaneous Values
+
+   Only parameters that actually come back get a row. USGS marks a
+   missing reading as -999999 rather than omitting it, and a tidal site
+   can legitimately read negative discharge when the river runs
+   backwards on a flood tide, so the sentinel is filtered by value
+   rather than by sign.
+   ================================================================ */
+const USGS_PARAMS = '00065,00060,00010,00095,00480';
+const USGS_SENTINEL = -99998;          // anything at or below this is "no reading"
+
+const PARAM = {
+  '00065': { label:'Gage height',  unit:'ft',    dec:2, steady:0.08 },
+  '00060': { label:'Discharge',    unit:'cfs',   dec:0, steady:0.06, signed:true },
+  '00010': { label:'Water temp',   unit:'°F',    dec:1, steady:0.5, conv:c => c * 9 / 5 + 32 },
+  '00095': { label:'Conductance',  unit:'µS/cm', dec:0, steady:0.05 },
+  '00480': { label:'Salinity',     unit:'ppt',   dec:1, steady:0.3 }
+};
+
+const river = { sites: [], at: 0, err: '' };
+
+async function loadRiver(){
+  const sites = (LOC.usgsSites || []);
+  river.sites = []; river.err = '';
+  if (!sites.length){
+    river.err = 'nostation';
+    renderRiver();
+    return;
+  }
+  try{
+    const url = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=' +
+                sites.map(s => s.id).join(',') +
+                '&parameterCd=' + USGS_PARAMS + '&period=P2D';
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+
+    const bySite = {};
+    for (const ts of (j.value && j.value.timeSeries) || []){
+      const code = ts.variable.variableCode[0].value;
+      const id = ts.sourceInfo.siteCode[0].value;
+      const raw = (ts.values[0] && ts.values[0].value) || [];
+      const series = raw
+        .map(v => ({ t: Date.parse(v.dateTime), v: parseFloat(v.value) }))
+        .filter(p => isFinite(p.v) && p.v > USGS_SENTINEL && isFinite(p.t));
+      if (!series.length) continue;                       // nothing real: no row
+      const meta = PARAM[code];
+      if (meta && meta.conv) series.forEach(p => { p.v = meta.conv(p.v); });
+      (bySite[id] = bySite[id] || {})[code] = series;
+    }
+
+    river.sites = sites.map(s => ({
+      id: s.id, label: s.label, role: s.role,
+      params: bySite[s.id] || {},
+      any: !!bySite[s.id]
+    }));
+    river.at = Date.now();
+  }catch(err){
+    river.err = 'USGS water data is unavailable right now.';
+  }
+  renderRiver();
+  renderRadarStrip();
+  renderFreshBite();
+}
+
+/* change against roughly 24 hours ago */
+function trend24(series, steadyFrac){
+  if (series.length < 4) return null;
+  const last = series[series.length - 1];
+  const target = last.t - 24 * 3600 * 1000;
+  let ref = series[0];
+  for (const p of series){ if (p.t <= target) ref = p; else break; }
+  if (ref === last) return null;
+  const d = last.v - ref.v;
+  const band = Math.abs(ref.v) * (steadyFrac || 0.05) + 0.02;
+  return { delta: d, hours: (last.t - ref.t) / 3600000,
+           dir: Math.abs(d) <= band ? 'steady' : (d > 0 ? 'rising' : 'falling') };
+}
+
+function sparkline(series, w, h){
+  if (series.length < 2) return '';
+  const cut = series[series.length - 1].t - 48 * 3600 * 1000;
+  const pts = series.filter(p => p.t >= cut);
+  if (pts.length < 2) return '';
+  const xs = pts.map(p => p.t), ys = pts.map(p => p.v);
+  const t0 = Math.min.apply(null, xs), t1 = Math.max.apply(null, xs);
+  let lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys);
+  if (hi - lo < 1e-6){ hi += 0.5; lo -= 0.5; }
+  const pad = (hi - lo) * 0.12; lo -= pad; hi += pad;
+  const X = t => 1 + (t - t0) / (t1 - t0 || 1) * (w - 2);
+  const Y = v => h - 1 - (v - lo) / (hi - lo) * (h - 2);
+  const d = pts.map(p => X(p.t).toFixed(1) + ',' + Y(p.v).toFixed(1)).join(' L');
+  return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" aria-hidden="true">' +
+    '<path d="M' + d + ' L' + X(t1).toFixed(1) + ',' + h + ' L' + X(t0).toFixed(1) + ',' + h + ' Z" fill="rgba(125,211,252,.16)"/>' +
+    '<path d="M' + d + '" fill="none" stroke="#7dd3fc" stroke-width="1.4" stroke-linejoin="round"/>' +
+    '</svg>';
+}
+
+const ARROW = { rising: '▲', falling: '▼', steady: '▬' };
+
+function renderRiver(){
+  const body = $('riverBody'), foot = $('riverSources');
+  $('riverAge').textContent = river.at ? 'updated ' + timeShort(new Date(river.at)) : 'loading…';
+
+  if (river.err === 'nostation'){
+    body.innerHTML = '<div class="rivernote">No water station configured for this spot yet. ' +
+                     'Radar and forecast above still work.</div>';
+    foot.innerHTML = '';
+    return;
+  }
+  if (river.err){
+    body.innerHTML = '<div class="riverbad">' + esc(river.err) + '</div>';
+    foot.innerHTML = '';
+    return;
+  }
+
+  const wt = waterType();
+  let html = '';
+  if (wt === 'brackish'){
+    html += '<div class="rivernote brack">Water level here is driven mostly by wind, ' +
+            'with a small tide.</div>';
+  }
+
+  for (const s of river.sites){
+    html += '<div class="site"><div class="sitehd">' +
+            '<span class="lbl">' + esc(s.label) + '</span>' +
+            '<span class="role">' + (s.role === 'upstream' ? 'upstream' : 'local') + '</span></div>';
+    const codes = Object.keys(s.params);
+    if (!codes.length){
+      html += '<div class="rivernote">No live readings from this gauge right now.</div></div>';
+      continue;
+    }
+    html += '<div class="rows">';
+    for (const code of ['00065', '00060', '00010', '00095', '00480']){
+      const series = s.params[code];
+      if (!series) continue;                              // never a blank row
+      const meta = PARAM[code];
+      const last = series[series.length - 1];
+      const tr = trend24(series, meta.steady);
+      let value = last.v.toFixed(meta.dec) + ' ' + meta.unit;
+      let extra = '';
+      if (code === '00060' && last.v < 0){
+        value = Math.abs(last.v).toFixed(0) + ' ' + meta.unit;
+        extra = '<span class="upstream">flowing upstream</span>';
+      }
+      html += '<div class="row">' +
+        '<span class="k">' + meta.label + '</span>' +
+        '<span class="v">' + value + '</span>' +
+        (tr ? '<span class="tr ' + tr.dir + '">' + ARROW[tr.dir] + ' ' +
+              (tr.dir === 'steady' ? 'steady' :
+               (tr.delta > 0 ? '+' : '') + tr.delta.toFixed(meta.dec) + ' / 24h') + '</span>'
+            : '<span class="tr"></span>') +
+        extra + '</div>';
+      if (code === '00065'){
+        const sp = sparkline(series, 240, 34);
+        if (sp) html += '<div class="sparkwrap">' + sp + '<span class="sparklbl">48 h</span></div>';
+      }
+    }
+    html += '</div></div>';
+  }
+  body.innerHTML = html;
+
+  // every station gets a link to the page it came from
+  const links = river.sites.map(s =>
+    '<a href="https://waterdata.usgs.gov/monitoring-location/' + s.id + '/" target="_blank" rel="noopener">USGS ' + s.id + '</a>');
+  if (LOC.noaaTideStation)
+    links.push('<a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=' + LOC.noaaTideStation +
+               '" target="_blank" rel="noopener">NOAA ' + LOC.noaaTideStation + '</a>');
+  if (LOC.nwpsGauge)
+    links.push('<a href="https://water.noaa.gov/gauges/' + LOC.nwpsGauge +
+               '" target="_blank" rel="noopener">NWS ' + LOC.nwpsGauge + '</a>');
+  foot.innerHTML = links.length ? 'Data sources: ' + links.join(' · ') : '';
+}
+
+/* ================================================================
+   BITE SCORE for fresh and brackish water
+
+   No tide phase here. Each factor carries a weight; a factor with no
+   data is dropped and the rest are re-weighted, and the card says which
+   ones were dropped rather than quietly scoring them as zero.
+   ================================================================ */
+function surfacePressureTrend(){
+  if (!wx || !wx.hourly || !wx.hourly.surface_pressure) return null;
+  const i = hourIndexNow();
+  const p = wx.hourly.surface_pressure;
+  const j = Math.max(0, i - 6);
+  if (p[i] == null || p[j] == null) return null;
+  return p[i] - p[j];                                     // mb over ~6 h
+}
+
+function lightWindow(){
+  if (!wx || !wx.daily || !wx.daily.sunrise) return null;
+  const now = Date.now();
+  const rise = parseLocal(wx.daily.sunrise[0]).getTime();
+  const set  = parseLocal(wx.daily.sunset[0]).getTime();
+  const near = Math.min(Math.abs(now - rise), Math.abs(now - set)) / 60000;   // minutes
+  return near;
+}
+
+function firstSeries(code){
+  for (const s of river.sites){ if (s.params[code]) return { s, series: s.params[code] }; }
+  return null;
+}
+
+function computeBiteFresh(){
+  const wt = waterType();
+  const factors = [];
+
+  // 1. barometer
+  const dp = surfacePressureTrend();
+  factors.push({
+    key: 'Barometer', weight: 25,
+    score: dp == null ? null
+         : dp < -3 ? 0.55 : dp < -0.5 ? 1.0 : dp < 0.5 ? 0.7 : dp < 3 ? 0.45 : 0.3,
+    note: dp == null ? 'no pressure data'
+        : (dp > 0 ? '+' : '') + dp.toFixed(1) + ' mb over 6 h' +
+          (dp < -0.5 && dp >= -3 ? ' — easing down ahead of weather' : '')
+  });
+
+  // 2. light
+  const lw = lightWindow();
+  factors.push({
+    key: 'Light', weight: 25,
+    score: lw == null ? null : lw < 45 ? 1.0 : lw < 90 ? 0.8 : lw < 180 ? 0.5 : 0.3,
+    note: lw == null ? 'no sun times'
+        : lw < 45 ? 'inside the dawn/dusk window'
+        : lw < 90 ? Math.round(lw) + ' min off first or last light'
+        : Math.round(lw / 60) + ' h from the nearest low-light window'
+  });
+
+  // 3. water temperature trend
+  const wtemp = firstSeries('00010');
+  if (wtemp){
+    const tr = trend24(wtemp.series, PARAM['00010'].steady);
+    const lastT = wtemp.series[wtemp.series.length - 1].v;
+    factors.push({
+      key: 'Water temp', weight: 25,
+      score: tr == null ? null
+           : tr.dir === 'rising' ? 0.85 : tr.dir === 'steady' ? 0.75 : 0.5,
+      note: lastT.toFixed(1) + '°F' + (tr ? ', ' + tr.dir + ' over 24 h' : '')
+    });
+  } else {
+    factors.push({ key: 'Water temp', weight: 25, score: null, note: 'no temperature sensor on these gauges' });
+  }
+
+  // 4. river stage: steady or easing off is best, a hard rise is worst
+  const stage = firstSeries('00065');
+  if (stage){
+    const tr = trend24(stage.series, PARAM['00065'].steady);
+    const rate = tr ? tr.delta / Math.max(1, tr.hours) : null;      // ft per hour
+    factors.push({
+      key: 'River stage', weight: 25,
+      score: rate == null ? null
+           : rate > 0.12 ? 0.15 : rate > 0.04 ? 0.4
+           : rate > -0.04 ? 1.0 : rate > -0.12 ? 0.85 : 0.6,
+      note: !tr ? 'stage known, trend not yet'
+          : tr.dir === 'steady' ? 'holding steady'
+          : (rate > 0.12 ? 'rising fast — expect dirty water'
+            : tr.dir === 'rising' ? 'rising slowly' : 'falling back')
+    });
+  } else {
+    factors.push({ key: 'River stage', weight: 25, score: null, note: 'no stage reading' });
+  }
+
+  const live = factors.filter(f => f.score != null);
+  const dropped = factors.filter(f => f.score == null);
+  if (!live.length){
+    return { score: 0, verdict: ['slow', 'No data'], factors, dropped,
+             reasons: ['<b>Nothing to score on.</b> No water or weather data reached this spot.'] };
+  }
+  const totalW = live.reduce((a, f) => a + f.weight, 0);
+  const score = Math.round(live.reduce((a, f) => a + f.score * f.weight, 0) / totalW * 100);
+
+  const reasons = live.map(f =>
+    '<b>' + f.key + '</b> ' + esc(f.note) +
+    ' <i>(' + Math.round(f.weight / totalW * 100) + '% of the score)</i>');
+  if (dropped.length)
+    reasons.push('<span class="dropped">Dropped, no data: ' +
+      dropped.map(f => esc(f.key.toLowerCase())).join(', ') +
+      '. The rest were re-weighted to make up the difference.</span>');
+
+  return {
+    score,
+    verdict: score >= 75 ? ['prime', 'Prime window'] :
+             score >= 55 ? ['good', 'Worth going'] :
+             score >= 35 ? ['fair', 'Fair'] : ['slow', 'Slow going'],
+    factors, dropped, reasons,
+    wt
+  };
+}
+
+/* ================================================================
+   WHICH PANEL IS SHOWING
+   ================================================================ */
+function refreshWaterPanel(){
+  const wt = waterType();
+  const salt = wt === 'salt';
+
+  $('cardTide').hidden = !salt;
+  $('cardRiver').hidden = salt;
+  $('cardStation').hidden = !(salt && S.showStation);
+  $('cardSolunar').hidden = !(salt && S.showSolunar);
+
+  if (salt){
+    if (LOC.noaaTideStation){
+      S.station = LOC.noaaTideStation;
+      loadTide();
+    } else {
+      tide.err = 'No tide station configured for this spot yet.';
+      tide.at = 0;
+      renderFishing();
+    }
+  } else {
+    loadRiver();
+    renderFreshBite();
+  }
+}
+
+function renderFreshBite(){
+  const b = computeBiteFresh();
+  const col = b.verdict[0] === 'prime' ? '#4ade80' : b.verdict[0] === 'good' ? '#7dd3fc' :
+              b.verdict[0] === 'fair' ? '#fbbf24' : '#8296b3';
+  $('biteScore').innerHTML = scoreRing(b.score, col);
+  $('biteVerdict').textContent = b.verdict[1];
+  $('biteVerdict').className = 'verdict ' + b.verdict[0];
+  $('biteReasons').innerHTML = b.reasons.map(r => '<span>' + r + '</span>').join('');
+  $('biteStation').textContent = (LOC.short || LOC.name) + ' · ' + waterType();
+  $('nextTide').innerHTML = '';
+  $('nextTide').hidden = true;
+  $('fishnote').textContent =
+    'Scored on barometer, light, water temperature and river stage — no tide phase in ' +
+    waterType() + ' water. Every factor and its share is listed above.';
+}
+
+/* ================================================================
    GO
    ================================================================ */
 /* The service worker only exists on a real origin; opening index.html
@@ -4069,6 +4790,15 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')){
 }
 
 applySettings();
+renderSaved();
+paintWaterSeg();
+$('locName').textContent = LOC.short || LOC.name;
+S.place = LOC.short || LOC.name;
+S.lat = LOC.lat; S.lon = LOC.lon;
+if (LOC.noaaTideStation) S.station = LOC.noaaTideStation;
+view.lat = LOC.lat; view.lon = LOC.lon; view.zoom = LOC.zoom || S.zoom;
+$('wxPlace').textContent = S.place;
+
 sizeRain();
 rainLoop();
 setTimeout(ambient, 3000);

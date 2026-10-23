@@ -21,7 +21,7 @@
    without a filename change.
    ================================================================ */
 
-const CACHE = 'storm-ranger-v3';
+const CACHE = 'storm-ranger-v4';
 
 // The static files that make up the app shell.
 const SHELL = [
@@ -58,8 +58,13 @@ self.addEventListener('fetch', (event) => {
   try { sameOrigin = new URL(req.url).origin === self.location.origin; }
   catch (e) { return; }
 
-  // Live weather and tide APIs live on other origins: hands off.
+  // Live data APIs all live on other origins: radar tiles, Open-Meteo,
+  // api.weather.gov, NOAA CO-OPS, USGS water services, Open-Meteo
+  // geocoding. None of it is ever cached or even intercepted.
   if (!sameOrigin) return;
+
+  // Belt and braces: if an API ever moves to this origin, still skip it.
+  if (/\/(api|nwis|ogcapi)\//.test(new URL(req.url).pathname)) return;
 
   // The page: network first, cache only as the offline fallback.
   //
