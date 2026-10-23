@@ -51,9 +51,31 @@ body{
 /* ============================================================
    BACKGROUND LAYERS: clouds, rain canvas, ambient lightning
    ============================================================ */
-#rain{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:.5}
+/* The backdrop is a photograph of the water you are looking at, one per
+   location. Two layers so a switch crossfades instead of snapping, and a
+   heavy scrim over the top because the whole interface has to stay
+   readable on an image we do not control. */
+.backdrop{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-size:cover;background-position:center center;
+  opacity:0;transition:opacity 1.6s ease;
+}
+.backdrop.on{opacity:var(--bd-strength)}
+/* Turn --bd-strength down toward 0 for a plainer background, up toward 1
+   to let more of the photograph through. The scrim below it is what
+   keeps body text legible over an image nobody vetted for contrast. */
+:root{--bd-strength:.85}
+.scrim{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    linear-gradient(180deg, rgba(3,7,14,.66) 0%, rgba(4,9,17,.20) 26%,
+                    rgba(4,9,17,.18) 64%, rgba(3,6,12,.70) 100%),
+    radial-gradient(135% 88% at 50% 38%, transparent 0%, rgba(3,7,14,.30) 100%);
+}
 
-.clouds{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;filter:blur(28px)}
+#rain{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;opacity:.5;display:none}
+
+.clouds{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;filter:blur(28px);display:none}
 .cloud{
   position:absolute;border-radius:50%;
   background:radial-gradient(circle at 40% 45%, rgba(120,150,195,.20), rgba(70,95,140,.10) 45%, transparent 70%);
@@ -83,10 +105,14 @@ header{display:flex;align-items:center;gap:14px;margin:4px 0 16px;flex-wrap:wrap
 .brand{flex:1 1 340px;min-width:0}
 h1{
   margin:0;font-size:clamp(22px,3.4vw,34px);letter-spacing:-.02em;font-weight:750;
+  filter:drop-shadow(0 2px 10px rgba(0,0,0,.7));
   background:linear-gradient(100deg,#fff 0%,var(--accent) 45%,var(--accent2) 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.brand p{margin:4px 0 0;color:var(--muted);font-size:12.5px;line-height:1.5}
+.brand p{
+  margin:4px 0 0;color:#aebfd4;font-size:12.5px;line-height:1.5;
+  text-shadow:0 1px 6px rgba(0,0,0,.85), 0 0 18px rgba(0,0,0,.6);
+}
 .headbtns{display:flex;gap:8px;flex:0 0 auto}
 .iconbtn{
   font:inherit;font-size:13px;font-weight:600;color:var(--text);
@@ -105,7 +131,7 @@ h1{
 
 .card{
   background:var(--panel);
-  border:1px solid var(--border);
+  border:1px solid var(--border-hi);
   border-radius:var(--radius);
   padding:16px;
   backdrop-filter:blur(10px);
@@ -930,6 +956,9 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 </head>
 <body>
 
+<div class="backdrop" id="bdA"></div>
+<div class="backdrop" id="bdB"></div>
+<div class="scrim"></div>
 <div class="clouds"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
 <canvas id="rain"></canvas>
 <div id="skyflash"></div>
@@ -4298,6 +4327,12 @@ const LOCATIONS = [
     name: 'St. Petersburg / Tampa Bay, FL',
     short: 'Tampa Bay',
     lat: 27.9506, lon: -82.4572, zoom: 8.4,
+    backdrop: [
+      './backdrops/tampa/tampa-1.jpg',
+      './backdrops/tampa/tampa-2.jpg',
+      './backdrops/tampa/tampa-3.jpg',
+      './backdrops/tampa/tampa-4.jpg'
+    ],
     waterType: 'salt',
     noaaTideStation: '8726520',
     usgsSites: [],
@@ -4308,6 +4343,7 @@ const LOCATIONS = [
     name: 'Washington, NC (Tar/Pamlico River)',
     short: 'Washington, NC',
     lat: 35.5425, lon: -77.0617, zoom: 9.3,
+    backdrop: './backdrops/tar-river.jpg',
     waterType: 'brackish',
     noaaTideStation: null,          // 8653365 is historical only, do not use
     usgsSites: [
@@ -4341,7 +4377,14 @@ function writeJSON(key, value){
 
 let LOC = (() => {
   const saved = readJSON(LOC_KEY, null);
-  if (saved && typeof saved.lat === 'number' && typeof saved.lon === 'number') return saved;
+  if (!saved) return LOCATIONS[0];
+  // A saved spot is re-read from LOCATIONS rather than replayed from
+  // storage, so edits to the config — new backdrops, new gauges, moved
+  // coordinates — reach anyone who already picked it. Only a searched
+  // spot, which has no entry in the config, keeps its stored copy.
+  const fresh = LOCATIONS.find(l => l.id === saved.id);
+  if (fresh) return fresh;
+  if (typeof saved.lat === 'number' && typeof saved.lon === 'number') return saved;
   return LOCATIONS[0];
 })();
 
@@ -4395,6 +4438,61 @@ function paintWaterSeg(){
   });
 }
 
+/* Crossfade between the two layers. A location can carry one photograph
+   or several; with several they shuffle on a timer. A searched spot has
+   none, so both layers fade out and the plain gradient shows through. */
+const BD_ROTATE_MS = 15000;
+let bdFront = 'A', bdList = [], bdIdx = 0, bdTimer = 0;
+
+function showBackdrop(url){
+  const front = $('bd' + bdFront), back = $('bd' + (bdFront === 'A' ? 'B' : 'A'));
+  if (front.classList.contains('on') && front.dataset.url === url) return;
+  back.style.backgroundImage = 'url("' + url + '")';
+  back.dataset.url = url;
+  const img = new Image();
+  img.onload = img.onerror = () => {
+    back.classList.add('on');
+    front.classList.remove('on');
+    bdFront = bdFront === 'A' ? 'B' : 'A';
+  };
+  img.src = url;
+}
+
+function shuffled(a){
+  const out = a.slice();
+  for (let i = out.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = out[i]; out[i] = out[j]; out[j] = t;
+  }
+  return out;
+}
+
+function setBackdrop(src){
+  clearInterval(bdTimer); bdTimer = 0;
+  bdList = !src ? [] : (Array.isArray(src) ? src : [src]);
+  if (!bdList.length){
+    $('bdA').classList.remove('on'); $('bdB').classList.remove('on');
+    return;
+  }
+  if (bdList.length > 1){
+    bdList = shuffled(bdList);
+    bdList.forEach(u => { const i = new Image(); i.src = u; });   // warm the cache
+  }
+  bdIdx = 0;
+  showBackdrop(bdList[0]);
+  if (bdList.length > 1) bdTimer = setInterval(rotateBackdrop, BD_ROTATE_MS);
+}
+
+function rotateBackdrop(){
+  if (bdList.length < 2 || document.visibilityState !== 'visible') return;
+  bdIdx++;
+  if (bdIdx >= bdList.length){      // reshuffle each time round so the
+    bdList = shuffled(bdList);      // order is not the same every cycle
+    bdIdx = 0;
+  }
+  showBackdrop(bdList[bdIdx]);
+}
+
 /* ---------- applying a location ---------- */
 function applyLocation(loc, opts){
   LOC = loc;
@@ -4408,6 +4506,7 @@ function applyLocation(loc, opts){
 
   $('locName').textContent = loc.short || loc.name;
   $('wxPlace').textContent = loc.short || loc.name;
+  setBackdrop(loc.backdrop);
 
   view.lat = loc.lat; view.lon = loc.lon;
   if (loc.zoom) { view.zoom = loc.zoom; S.zoom = loc.zoom; }
@@ -4917,6 +5016,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')){
 }
 
 applySettings();
+setBackdrop(LOC.backdrop);
 renderSaved();
 paintWaterSeg();
 $('locName').textContent = LOC.short || LOC.name;
@@ -4926,8 +5026,8 @@ if (LOC.noaaTideStation) S.station = LOC.noaaTideStation;
 view.lat = LOC.lat; view.lon = LOC.lon; view.zoom = LOC.zoom || S.zoom;
 $('wxPlace').textContent = S.place;
 
-sizeRain();
-rainLoop();
+// the rain canvas is hidden behind the photograph; leave it idle
+// sizeRain(); rainLoop();
 setTimeout(ambient, 3000);
 sizeMap();
 refreshAll();

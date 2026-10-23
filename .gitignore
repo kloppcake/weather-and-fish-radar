@@ -1,2 +1,5 @@
 node_modules/
 dist/
+# source photos for the backdrops; the optimised copies in backdrops/ are
+# what the site actually serves
+Background Images for app/
