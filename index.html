@@ -407,7 +407,10 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
 .sitehd .role{
   font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;
   color:var(--dim);background:rgba(125,170,220,.12);border-radius:99px;padding:3px 8px;
+  white-space:nowrap;
 }
+.sitehd .role.regional{color:#c4b5fd;background:rgba(167,139,250,.16)}
+.sitenote{font-size:10.5px;color:var(--dim);margin:-3px 0 6px;line-height:1.4}
 .rows{display:flex;flex-direction:column;gap:3px}
 .row{
   display:grid;grid-template-columns:1fr auto auto;gap:9px;align-items:baseline;
@@ -2425,7 +2428,7 @@ async function loadWeather(){
     wxDayIdx = 0;
     renderWeather();
     renderRadarStrip();              // the wind fallback comes from this payload
-    if (waterType() !== 'salt') renderFreshBite();
+    if (waterType() !== 'salt' && !river.loading) renderFreshBite();
     if (!MOTION.ok){                 // radar correlation found nothing; try the steering wind now
       steeringWindFallback();
       if (MOTION.ok){ rebuildFrames(false); }
@@ -4281,7 +4284,13 @@ const LOCATIONS = [
       // nearest upstream Tar River gauge with live discharge. Greenville
       // (02084000) is closer but every discharge value it returns is the
       // -999999 no-data sentinel, so Tarboro is used instead.
-      { id: '02083500', label: 'Tar River at Tarboro', role: 'upstream' }
+      { id: '02083500', label: 'Tar River at Tarboro', role: 'upstream' },
+      // No gauge on the Tar or the Pamlico still reports water temperature:
+      // Washington's own sensor stopped in 2009 and Tarboro's in 1999. This
+      // is the closest live river temperature, 25 miles north in the same
+      // coastal plain, and only its temperature is used.
+      { id: '02081094', label: 'Roanoke River at Jamesville', role: 'regional',
+        only: ['00010'], note: 'nearest live river temperature, 25 mi N' }
     ],
     nwpsGauge: null                 // no NWPS gauge resolved for this reach
   }
@@ -4463,14 +4472,14 @@ const PARAM = {
   '00480': { label:'Salinity',     unit:'ppt',   dec:1, steady:0.3 }
 };
 
-const river = { sites: [], at: 0, err: '' };
+const river = { sites: [], at: 0, err: '', loading: false };
 
 async function loadRiver(){
   const sites = (LOC.usgsSites || []);
-  river.sites = []; river.err = '';
+  river.sites = []; river.err = ''; river.loading = true;
   if (!sites.length){
-    river.err = 'nostation';
-    renderRiver();
+    river.err = 'nostation'; river.loading = false;
+    renderRiver(); renderFreshBite();
     return;
   }
   try{
@@ -4490,13 +4499,15 @@ async function loadRiver(){
         .map(v => ({ t: Date.parse(v.dateTime), v: parseFloat(v.value) }))
         .filter(p => isFinite(p.v) && p.v > USGS_SENTINEL && isFinite(p.t));
       if (!series.length) continue;                       // nothing real: no row
+      const cfg = sites.find(x => x.id === id);
+      if (cfg && cfg.only && cfg.only.indexOf(code) < 0) continue;
       const meta = PARAM[code];
       if (meta && meta.conv) series.forEach(p => { p.v = meta.conv(p.v); });
       (bySite[id] = bySite[id] || {})[code] = series;
     }
 
     river.sites = sites.map(s => ({
-      id: s.id, label: s.label, role: s.role,
+      id: s.id, label: s.label, role: s.role, note: s.note,
       params: bySite[s.id] || {},
       any: !!bySite[s.id]
     }));
@@ -4504,6 +4515,7 @@ async function loadRiver(){
   }catch(err){
     river.err = 'USGS water data is unavailable right now.';
   }
+  river.loading = false;
   renderRiver();
   renderRadarStrip();
   renderFreshBite();
@@ -4570,7 +4582,8 @@ function renderRiver(){
   for (const s of river.sites){
     html += '<div class="site"><div class="sitehd">' +
             '<span class="lbl">' + esc(s.label) + '</span>' +
-            '<span class="role">' + (s.role === 'upstream' ? 'upstream' : 'local') + '</span></div>';
+            '<span class="role ' + (s.role || 'local') + '">' + esc(s.role || 'local') + '</span></div>' +
+            (s.note ? '<div class="sitenote">' + esc(s.note) + '</div>' : '');
     const codes = Object.keys(s.params);
     if (!codes.length){
       html += '<div class="rivernote">No live readings from this gauge right now.</div></div>';
@@ -4648,14 +4661,24 @@ function firstSeries(code){
   return null;
 }
 
+/* Brackish water here moves on the wind, fresh water moves on flow, so
+   the two are weighted differently and brackish gets a wind factor that
+   fresh has no use for. The card prints every weight, so the difference
+   between the two tabs is visible rather than implied. */
+const WT_WEIGHTS = {
+  brackish: { baro:20, light:20, temp:20, stage:15, wind:25 },
+  fresh:    { baro:25, light:25, temp:25, stage:25, wind:0 }
+};
+
 function computeBiteFresh(){
   const wt = waterType();
+  const W = WT_WEIGHTS[wt] || WT_WEIGHTS.fresh;
   const factors = [];
 
   // 1. barometer
   const dp = surfacePressureTrend();
   factors.push({
-    key: 'Barometer', weight: 25,
+    key: 'Barometer', weight: W.baro,
     score: dp == null ? null
          : dp < -3 ? 0.55 : dp < -0.5 ? 1.0 : dp < 0.5 ? 0.7 : dp < 3 ? 0.45 : 0.3,
     note: dp == null ? 'no pressure data'
@@ -4666,7 +4689,7 @@ function computeBiteFresh(){
   // 2. light
   const lw = lightWindow();
   factors.push({
-    key: 'Light', weight: 25,
+    key: 'Light', weight: W.light,
     score: lw == null ? null : lw < 45 ? 1.0 : lw < 90 ? 0.8 : lw < 180 ? 0.5 : 0.3,
     note: lw == null ? 'no sun times'
         : lw < 45 ? 'inside the dawn/dusk window'
@@ -4680,13 +4703,13 @@ function computeBiteFresh(){
     const tr = trend24(wtemp.series, PARAM['00010'].steady);
     const lastT = wtemp.series[wtemp.series.length - 1].v;
     factors.push({
-      key: 'Water temp', weight: 25,
+      key: 'Water temp', weight: W.temp,
       score: tr == null ? null
            : tr.dir === 'rising' ? 0.85 : tr.dir === 'steady' ? 0.75 : 0.5,
-      note: lastT.toFixed(1) + '°F' + (tr ? ', ' + tr.dir + ' over 24 h' : '')
+      note: lastT.toFixed(1) + '°F at ' + wtemp.s.label + (tr ? ', ' + tr.dir + ' over 24 h' : '')
     });
   } else {
-    factors.push({ key: 'Water temp', weight: 25, score: null, note: 'no temperature sensor on these gauges' });
+    factors.push({ key: 'Water temp', weight: W.temp, score: null, note: 'no live temperature sensor nearby' });
   }
 
   // 4. river stage: steady or easing off is best, a hard rise is worst
@@ -4695,7 +4718,7 @@ function computeBiteFresh(){
     const tr = trend24(stage.series, PARAM['00065'].steady);
     const rate = tr ? tr.delta / Math.max(1, tr.hours) : null;      // ft per hour
     factors.push({
-      key: 'River stage', weight: 25,
+      key: 'River stage', weight: W.stage,
       score: rate == null ? null
            : rate > 0.12 ? 0.15 : rate > 0.04 ? 0.4
            : rate > -0.04 ? 1.0 : rate > -0.12 ? 0.85 : 0.6,
@@ -4705,7 +4728,25 @@ function computeBiteFresh(){
             : tr.dir === 'rising' ? 'rising slowly' : 'falling back')
     });
   } else {
-    factors.push({ key: 'River stage', weight: 25, score: null, note: 'no stage reading' });
+    factors.push({ key: 'River stage', weight: W.stage, score: null, note: 'no stage reading' });
+  }
+
+  // 5. wind, which is what actually moves brackish water in and out
+  if (W.wind){
+    const mph = (wx && wx.current && wx.current.wind_speed_10m != null) ? wx.current.wind_speed_10m : null;
+    const dir = (wx && wx.current && wx.current.wind_direction_10m != null)
+              ? compassPt(wx.current.wind_direction_10m) : '';
+    factors.push({
+      key: 'Wind', weight: W.wind,
+      score: mph == null ? null
+           : mph < 4 ? 0.65 : mph <= 14 ? 1.0 : mph <= 22 ? 0.55 : 0.25,
+      note: mph == null ? 'no wind data'
+          : (dir ? dir + ' ' : '') + Math.round(mph) + ' mph' +
+            (mph < 4 ? ' — slack, little push on the water'
+             : mph <= 14 ? ' — enough to move water around'
+             : mph <= 22 ? ' — getting pushy'
+             : ' — likely blown out and muddy')
+    });
   }
 
   const live = factors.filter(f => f.score != null);
@@ -4756,8 +4797,9 @@ function refreshWaterPanel(){
       clearTide('No water station configured for this spot yet.');
     }
   } else {
+    river.loading = true;
+    renderFreshBite();        // shows the holding state, not a throwaway score
     loadRiver();
-    renderFreshBite();
   }
 }
 
@@ -4783,6 +4825,17 @@ function clearTide(msg){
 }
 
 function renderFreshBite(){
+  // Scoring against gauges that have not answered yet produced a number
+  // that jumped as soon as they did. Hold the card until they land.
+  if (river.loading){
+    $('biteScore').innerHTML = scoreRing(0, '#5a6c86');
+    $('biteVerdict').textContent = 'Reading gauges…';
+    $('biteVerdict').className = 'verdict slow';
+    $('biteReasons').innerHTML = '<span>Waiting on the river gauges and the forecast.</span>';
+    $('biteStation').textContent = (LOC.short || LOC.name) + ' · ' + waterType();
+    $('nextTide').innerHTML = ''; $('nextTide').hidden = true;
+    return;
+  }
   const b = computeBiteFresh();
   const col = b.verdict[0] === 'prime' ? '#4ade80' : b.verdict[0] === 'good' ? '#7dd3fc' :
               b.verdict[0] === 'fair' ? '#fbbf24' : '#8296b3';
