@@ -1327,7 +1327,7 @@ const DEFAULTS = {
   place:'Tampa', lat:27.9506, lon:-82.4572, zoom:8.4,
   units:'imperial', rings:'mi',
   scheme:'4', nowcast:true, autoplay:true, smooth:true, opacity:85, speed:500,
-  showStation:false, showSolunar:false, showStations:true,
+  showStation:false, showSolunar:false, showStations:false,
   station:'8726520'
 };
 const SKEY = 'stormranger.settings.v2';
@@ -1335,7 +1335,14 @@ const SKEY = 'stormranger.settings.v2';
 function loadSettings(){
   let s = {};
   try { s = JSON.parse(localStorage.getItem(SKEY) || '{}') || {}; } catch(e){ s = {}; }
-  return Object.assign({}, DEFAULTS, s);
+  const merged = Object.assign({}, DEFAULTS, s);
+  // the gauge layer used to default on; switch it off once for anyone
+  // carrying that old preference, without touching their other settings
+  if (!merged.gaugesDefaultOff){
+    merged.showStations = false;
+    merged.gaugesDefaultOff = true;
+  }
+  return merged;
 }
 function saveSettings(){
   try { localStorage.setItem(SKEY, JSON.stringify(S)); } catch(e){ /* private mode: run without persistence */ }
@@ -1630,6 +1637,7 @@ function drawMap(){
    ================================================================ */
 const STATION_ZONE_MI = 6;
 let stationHits = [];
+let stationReveal = null;          // the one gauge whose range is on screen
 
 function hexA(hex, a){
   const n = parseInt(hex.slice(1), 16);
@@ -1642,9 +1650,11 @@ function drawStations(ctx, z, scale, cx, cy, mPerPx){
   const W = fxCv.width, H = fxCv.height;
   const r = clamp(STATION_ZONE_MI * 1609.344 / mPerPx, 9 * MDPR, 130 * MDPR);
 
-  // the chosen gauge is drawn last so it sits on top of its neighbours
-  const order = TIDE_STATIONS.slice().sort(
-    (a, b) => (a.id === S.station ? 1 : 0) - (b.id === S.station ? 1 : 0));
+  // Six overlapping discs buried the map, so the layer is just markers.
+  // A disc is drawn only for the gauge you clicked into, and the click
+  // target stays the full radius whether or not its circle is showing.
+  const order = TIDE_STATIONS.slice().sort((a, b) =>
+    (a.id === stationReveal ? 1 : 0) - (b.id === stationReveal ? 1 : 0));
 
   const drawn = [];
   for (const st of order){
@@ -1654,19 +1664,30 @@ function drawStations(ctx, z, scale, cx, cy, mPerPx){
     if (x < -pad || x > W + pad || y < -pad || y > H + pad) continue;
 
     const sel = st.id === S.station;
+    const open = st.id === stationReveal;
     stationHits.push({ id: st.id, x, y, r });
-    drawn.push({ st, x, y, sel });
+    drawn.push({ st, x, y, sel, open });
 
     ctx.save();
-    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = hexA(st.colour, sel ? 0.26 : 0.11);
-    ctx.fill();
-    ctx.lineWidth = (sel ? 2.6 : 1.5) * MDPR;
-    ctx.strokeStyle = hexA(st.colour, sel ? 1 : 0.78);
-    ctx.stroke();
+    if (open){
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = hexA(st.colour, 0.22);
+      ctx.fill();
+      ctx.lineWidth = 2.2 * MDPR;
+      ctx.strokeStyle = hexA(st.colour, 0.95);
+      ctx.stroke();
+    }
 
-    ctx.beginPath(); ctx.arc(x, y, (sel ? 4 : 2.6) * MDPR, 0, Math.PI * 2);
+    // the marker itself: a ring so it reads against any basemap
+    const rad = (sel ? 5.2 : 4) * MDPR;
+    ctx.beginPath(); ctx.arc(x, y, rad + 1.6 * MDPR, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(4,10,18,.75)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2);
     ctx.fillStyle = st.colour; ctx.fill();
+    if (sel){
+      ctx.lineWidth = 1.8 * MDPR;
+      ctx.strokeStyle = '#ffffff'; ctx.stroke();
+    }
     ctx.restore();
   }
 
@@ -1679,15 +1700,17 @@ function drawStations(ctx, z, scale, cx, cy, mPerPx){
   const hit = (a, b) => !(a.x + a.w < b.x || b.x + b.w < a.x || a.y + a.h < b.y || b.y + b.h < a.y);
 
   for (const d of drawn.slice().sort((a, b) => (b.sel ? 1 : 0) - (a.sel ? 1 : 0))){
-    if (!d.sel && r <= 15 * MDPR) continue;              // too small to label without clutter
+    if (!d.sel && !d.open && r <= 15 * MDPR) continue;    // too small to label without clutter
     ctx.save();
     ctx.font = (d.sel ? '700 ' : '600 ') + (11 * MDPR) + 'px system-ui, -apple-system, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     const tw = ctx.measureText(d.st.name).width;
     const bw = tw + 10 * MDPR, bh = 17 * MDPR;
 
+    // chips hang off the marker, not off an invisible radius
+    const reach = d.open ? r + 12 * MDPR : 14 * MDPR;
     let box = null;
-    for (const dy of [r + 12 * MDPR, -(r + 12 * MDPR)]){
+    for (const dy of [reach, -reach]){
       const cand = { x: d.x - bw/2, y: d.y + dy - bh/2, w: bw, h: bh };
       if (!placed.some(q => hit(q, cand))){ box = cand; break; }
     }
@@ -1816,11 +1839,19 @@ function pickStation(e){
     if (Math.hypot(x - h.x, y - h.y) > h.r) continue;
     if (!best || h.r < best.r) best = h;
   }
-  if (!best || best.id === S.station) return;
-  S.station = best.id;
-  saveSettings();
-  $('stationSel').value = best.id;
-  loadTide();
+
+  if (!best){                       // tapped open water: put the circle away
+    if (stationReveal){ stationReveal = null; drawOverlay(); }
+    return;
+  }
+
+  stationReveal = best.id;          // show this one's range
+  if (best.id !== S.station && LOC.noaaTideStation){
+    S.station = best.id;
+    saveSettings();
+    $('stationSel').value = best.id;
+    loadTide();
+  }
   drawOverlay();
 }
 mapwrap.addEventListener('pointerup', endDrag);
@@ -1864,6 +1895,7 @@ function paintStationsBtn(){
 }
 $('stationsBtn').onclick = () => {
   S.showStations = !S.showStations;
+  stationReveal = null;            // always comes back as plain markers
   saveSettings();
   paintStationsBtn();
   drawOverlay();

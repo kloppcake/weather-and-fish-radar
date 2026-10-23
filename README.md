@@ -40,14 +40,14 @@ to the latest scan and holds there; it lights up while that is the frame on
 screen.
 Dashed rings mark 10, 25 and 50 miles from where you are standing.
 
-The **pin button** in the map's control stack, under the zoom buttons, turns the
-tide gauges on and off and stays lit while they are showing. With it on, every
-NOAA gauge in the list appears on the radar in its own colour: a translucent six-mile disc with a hard
-outline, so the coastline and any rain read straight through it, plus a name chip
-that steps aside rather than printing over its neighbour. The gauge you are using
-is drawn brighter and on top. Click any disc to switch the tide panel to that
-gauge. The disc marks the gauge and the water around it; it is not a surveyed
-boundary, and the gauges themselves are points.
+The **TIDE GAUGES button** in the map's control stack is off by default. Switch
+it on and every NOAA gauge appears as a coloured marker with a name chip; the
+one feeding the tide panel has a white ring. Click a marker, or anywhere within
+six miles of it, and that gauge's range is drawn as a translucent disc and the
+tide panel switches to it. Click open water to put the disc away. Only one
+range shows at a time, because six overlapping discs buried the map. The disc
+marks the gauge and the water around it; it is not a surveyed boundary, and the
+gauges themselves are points.
 
 Under the map sit the three numbers worth a glance before you go out: **water
 temperature, wind and gusts**. Wind is in knots because that is what the gauge
