@@ -936,7 +936,7 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
   <header>
     <div class="brand">
       <h1>⚡ Storm Ranger</h1>
-      <p>Live radar with a forecast loop, the local forecast, and a tide and fishing analyzer built on the NOAA gauge at St. Petersburg.</p>
+      <p>Live radar with a forecast loop, the local forecast, and a water panel that reads tides, river gauges or both depending on where you are.</p>
     </div>
     <div class="headbtns">
       <button class="iconbtn" id="refreshBtn" title="Refresh radar, forecast and alerts">
@@ -3247,6 +3247,7 @@ function renderNextTide(){
 
 function renderTideChart(){
   const wrap = $('tideChart');
+  if (tide.err && !tide.curve.length){ return; }      // the message stands
   if (!tide.curve.length){ wrap.innerHTML = '<div class="chart-empty">No tide curve.</div>'; return; }
 
   const now = Date.now();
@@ -4747,18 +4748,38 @@ function refreshWaterPanel(){
   $('cardSolunar').hidden = !(salt && S.showSolunar);
 
   if (salt){
+    $('fishnote').textContent = 'A rule-of-thumb blend of tide flow, solunar timing, moon phase, wind and barometer. Every part of it is listed above so you can disagree with it.';
     if (LOC.noaaTideStation){
       S.station = LOC.noaaTideStation;
       loadTide();
     } else {
-      tide.err = 'No tide station configured for this spot yet.';
-      tide.at = 0;
-      renderFishing();
+      clearTide('No water station configured for this spot yet.');
     }
   } else {
     loadRiver();
     renderFreshBite();
   }
+}
+
+/* Drop every reading from the last location before saying there is
+   nothing here, or its chart stays on screen looking like this spot's. */
+function clearTide(msg){
+  tide.hilo = []; tide.curve = []; tide.observed = [];
+  tide.wtemp = tide.atemp = null; tide.wind = null; tide.press = [];
+  tide.at = 0; tide.err = msg;
+  $('tideAge').textContent = 'no station';
+  $('tideChart').innerHTML = '<div class="chart-empty">' + esc(msg) + '</div>';
+  $('tideNext').innerHTML = '';
+  $('nextTide').innerHTML = ''; $('nextTide').hidden = true;
+  $('fishTiles').innerHTML = ''; $('solunar').innerHTML = '';
+  $('biteStation').textContent = (LOC.short || LOC.name) + ' · no station';
+  $('biteScore').innerHTML = scoreRing(0, '#8296b3');
+  $('biteVerdict').textContent = 'No water data';
+  $('biteVerdict').className = 'verdict slow';
+  $('biteReasons').innerHTML = '<span>' + esc(msg) +
+    ' Radar and forecast above still work. Add one to LOCATIONS to wire it up.</span>';
+  $('fishnote').textContent = '';
+  renderRadarStrip();
 }
 
 function renderFreshBite(){
@@ -4775,6 +4796,7 @@ function renderFreshBite(){
   $('fishnote').textContent =
     'Scored on barometer, light, water temperature and river stage — no tide phase in ' +
     waterType() + ' water. Every factor and its share is listed above.';
+  $('nextTide').hidden = true;
 }
 
 /* ================================================================

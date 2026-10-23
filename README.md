@@ -74,8 +74,12 @@ day to move the chart to it.
 **Warnings.** Active National Weather Service alerts for your coordinates appear
 at the top of the page, colour-coded by severity. Tap one for the full text.
 
-**The right-hand rail is the fishing and tide analyzer.** It pulls from the NOAA
-CO-OPS gauge at **St. Petersburg (8726520)**, changeable in Settings, and shows:
+**Changing location.** The radar header is a button. Click it for a search box
+covering Florida, Georgia, South Carolina and North Carolina, plus your saved
+spots. Your choice is remembered. Searched spots get radar and forecast; they
+have no water station behind them, and the panel says so rather than guessing.
+
+**The right-hand rail is the fishing and water analyzer.** It shows:
 
 - A **bite score** out of 100 with the verdict and every input listed, so you can
   disagree with it. It blends tide flow rate, solunar timing, moon phase, wind and
@@ -109,6 +113,68 @@ doing.
 **Settings** (top right) holds your location, tide station, units, radar
 appearance, and the detector tuning sliders that used to sit on the main page.
 Everything there is remembered between runs.
+
+---
+
+## Adding a saved location
+
+Open `index.html`, find `const LOCATIONS = [` near the top of the script, and add
+an object. Nothing else needs touching — the radar, forecast and water panel all
+key off it.
+
+```js
+{
+  id: 'my-spot',                       // anything unique
+  name: 'Full name shown in the list',
+  short: 'Short name for the header',
+  lat: 35.1234, lon: -77.1234,
+  zoom: 9.2,                           // starting radar zoom
+  waterType: 'brackish',               // 'salt' | 'brackish' | 'fresh'
+  noaaTideStation: null,               // CO-OPS id for tides, or null
+  usgsSites: [                         // river gauges, or []
+    { id: '02084472', label: 'Pamlico River at Washington', role: 'local' },
+    { id: '02083500', label: 'Tar River at Tarboro',        role: 'upstream' }
+  ],
+  nwpsGauge: null                      // NWS river-forecast LID, or null
+}
+```
+
+Find a USGS site id at [waterdata.usgs.gov](https://waterdata.usgs.gov/) and a
+tide station at [tidesandcurrents.noaa.gov](https://tidesandcurrents.noaa.gov/).
+Check the gauge actually reports what you expect before adding it; plenty publish
+a parameter that returns nothing but the no-data sentinel.
+
+## What the water types mean
+
+A **Salt | Brackish | Fresh** control sits at the top of the rail. It starts on
+the location's own setting and your override is remembered per location.
+
+- **Salt** reads NOAA CO-OPS: tide predictions, the live gauge, water
+  temperature, wind and barometer. The bite score leans on tide flow.
+- **Brackish** reads USGS river gauges and adds a reminder that the water level
+  is driven mostly by wind here, with only a small tide.
+- **Fresh** reads the same USGS gauges without the tide note.
+
+In fresh and brackish the bite score ignores tide phase entirely and works from
+barometer trend, the dawn and dusk window, water temperature trend and river
+stage trend. Steady or slowly falling water scores better than a fast rise,
+which usually means dirty water. Each factor shows its share of the score, and
+any factor with no data is dropped and the rest re-weighted, with the card
+naming what was dropped.
+
+## Where the river data comes from
+
+USGS instantaneous values, which report every parameter the gauge carries. Only
+parameters that actually return readings get a row, so you never see a blank
+one. Two quirks worth knowing:
+
+- A missing reading comes back as **-999999**, not as an absent value. It is
+  filtered out by value.
+- A tidal gauge can legitimately report **negative discharge** when the river
+  runs backwards on a flood tide. That is shown as "flowing upstream", not
+  treated as an error.
+
+Each panel links the public page for every station it read.
 
 ---
 
@@ -184,6 +250,8 @@ Everything is keyless and free, and the app talks to these directly:
 | Forecast | Open-Meteo |
 | Warnings | US National Weather Service |
 | Tides and station observations | NOAA CO-OPS |
+| River gauges | USGS Instantaneous Values |
+| Location search | Open-Meteo Geocoding |
 
 Hosting is GitHub Pages, served from `main` at the repository root. A
 `.nojekyll` file keeps Pages from running the site through Jekyll.
