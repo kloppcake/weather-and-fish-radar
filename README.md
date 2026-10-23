@@ -146,8 +146,12 @@ a parameter that returns nothing but the no-data sentinel.
 
 ## What the water types mean
 
-A **Salt | Brackish | Fresh** control sits at the top of the rail. It starts on
-the location's own setting and your override is remembered per location.
+A **Salt | Brackish | Fresh** control sits at the top of the rail, but only
+where there is a choice to make. A location is offered Salt if it has a NOAA
+tide station, and Brackish and Fresh if it has river gauges. Tampa Bay has
+tides and no river gauges, so it gets no control at all; Washington has gauges
+and no usable tide station, so it gets Brackish and Fresh. When a location does
+offer a choice, your override is remembered for that spot.
 
 - **Salt** reads NOAA CO-OPS: tide predictions, the live gauge, water
   temperature, wind and barometer. The bite score leans on tide flow.

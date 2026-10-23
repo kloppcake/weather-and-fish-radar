@@ -1039,7 +1039,7 @@ footer{text-align:center;color:var(--dim);font-size:11.5px;margin-top:24px;line-
     <div class="stack">
 
 
-        <div class="watertype">
+        <div class="watertype" id="waterTypeRow">
           <div class="seg" id="waterSeg">
             <button data-wt="salt">Salt</button>
             <button data-wt="brackish">Brackish</button>
@@ -4326,12 +4326,26 @@ function locFromGeo(r){
   };
 }
 
-/* water type: the location's default unless this spot has an override */
+/* Only offer what this location can actually answer: tides need a CO-OPS
+   station, brackish and fresh need river gauges. Tampa Bay has no river
+   gauges, so it is never asked the question. */
+function availableWaterTypes(){
+  const out = [];
+  if (LOC.noaaTideStation) out.push('salt');
+  if ((LOC.usgsSites || []).length) out.push('brackish', 'fresh');
+  return out;
+}
+
+/* the location's default, unless this spot has a still-valid override */
 function waterType(){
-  const over = readJSON(WT_KEY, {});
-  return over[LOC.id] || LOC.waterType || 'salt';
+  const avail = availableWaterTypes();
+  const over = readJSON(WT_KEY, {})[LOC.id];
+  if (over && avail.indexOf(over) >= 0) return over;
+  if (avail.indexOf(LOC.waterType) >= 0) return LOC.waterType;
+  return avail[0] || LOC.waterType || 'salt';
 }
 function setWaterType(wt){
+  if (availableWaterTypes().indexOf(wt) < 0) return;   // not offered here
   const over = readJSON(WT_KEY, {});
   over[LOC.id] = wt;
   writeJSON(WT_KEY, over);
@@ -4339,8 +4353,14 @@ function setWaterType(wt){
   refreshWaterPanel();
 }
 function paintWaterSeg(){
+  const avail = availableWaterTypes();
   const wt = waterType();
-  $('waterSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.wt === wt));
+  // one option is not a choice, so the control disappears entirely
+  $('waterTypeRow').hidden = avail.length < 2;
+  $('waterSeg').querySelectorAll('button').forEach(b => {
+    b.hidden = avail.indexOf(b.dataset.wt) < 0;
+    b.classList.toggle('on', b.dataset.wt === wt);
+  });
 }
 
 /* ---------- applying a location ---------- */
